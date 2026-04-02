@@ -1,65 +1,848 @@
+"use client";
+
+import { useRef, useState, useEffect } from "react";
 import Image from "next/image";
+import type { Group } from "three";
+import { motion } from "framer-motion";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { OrbitControls, Sphere, Stars } from "@react-three/drei";
+
+// Countdown timer component
+function CountdownTimer() {
+  const [timeLeft, setTimeLeft] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
+
+  useEffect(() => {
+    const calculateTimeLeft = () => {
+      const targetDate = new Date("2026-04-10T20:00:00").getTime();
+      const now = new Date().getTime();
+      const difference = targetDate - now;
+
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60),
+        });
+      }
+    };
+
+    calculateTimeLeft();
+    const timer = setInterval(calculateTimeLeft, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.6 }}
+      className="rounded-3xl p-8 mb-12 backdrop-blur-md"
+      style={{
+        backgroundColor: "rgba(10, 10, 10, 0.9)",
+        border: "1px solid rgba(212, 175, 55, 0.3)",
+        boxShadow: "0 20px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)"
+      }}
+    >
+      <p className="text-center font-bold text-lg mb-6" style={{ color: "#F5D76E" }}>Program Starts In:</p>
+      <div className="grid grid-cols-4 gap-4">
+        {[
+          { value: timeLeft.days, label: "Days" },
+          { value: timeLeft.hours, label: "Hours" },
+          { value: timeLeft.minutes, label: "Mins" },
+          { value: timeLeft.seconds, label: "Secs" },
+        ].map((item, idx) => (
+          <div key={idx} className="text-center p-4 rounded-2xl" style={{ backgroundColor: "rgba(212, 175, 55, 0.1)", border: "1px solid rgba(212, 175, 55, 0.2)" }}>
+            <motion.div
+              className="text-3xl md:text-4xl font-black"
+              style={{ backgroundImage: "linear-gradient(135deg, #D4AF37, #F5D76E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", color: "transparent" }}
+              animate={{ scale: [1, 1.1, 1] }}
+              transition={{ duration: 0.5, repeat: Infinity }}
+            >
+              {String(item.value).padStart(2, "0")}
+            </motion.div>
+            <p className="text-xs uppercase mt-2 font-bold" style={{ color: "#B3B3B3" }}>{item.label}</p>
+          </div>
+        ))}
+      </div>
+      <p className="text-center text-sm mt-6" style={{ color: "#B3B3B3" }}>10 April, 8:00 PM IST</p>
+    </motion.div>
+  );
+}
+
+// Animated text reveal component
+function AnimatedTextReveal({ text, className }: { text: string; className: string }) {
+  const words = text.split(" ");
+  return (
+    <div className={className}>
+      {words.map((word, index) => (
+        <motion.span
+          key={index}
+          className="inline-block mr-2"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            delay: index * 0.12,
+            type: "spring",
+            damping: 12,
+            stiffness: 100
+          }}
+        >
+          {word}
+        </motion.span>
+      ))}
+    </div>
+  );
+}
+
+// Interactive comparison slider - PREMIUM REDESIGN
+function ComparisonSlider() {
+  const [sliderPosition, setSliderPosition] = useState(8);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleDrag = (clientX: number) => {
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    const position = ((clientX - rect.left) / rect.width) * 100;
+    setSliderPosition(Math.min(Math.max(position, 0), 100));
+  };
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => handleDrag(e.clientX);
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>) => handleDrag(e.touches[0].clientX);
+
+  return (
+    <motion.div
+      ref={containerRef}
+      className="relative w-full rounded-3xl overflow-hidden cursor-ew-resize select-none group"
+      onMouseMove={handleMouseMove}
+      onTouchMove={handleTouchMove}
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.8, ease: "easeInOut" }}
+      style={{
+        minHeight: "600px",
+        backgroundColor: "#000000",
+        border: "1px solid #1A1A1A",
+        boxShadow: "0 20px 60px rgba(0, 0, 0, 0.8)"
+      }}
+    >
+      {/* BASE LAYER: LEFT SIDE (TRAPPED) ALWAYS VISIBLE */}
+      <div className="absolute inset-0 w-full h-full bg-[#000000]">
+        <div className="absolute inset-0 z-0 bg-black/70" />
+        {/* Subtle glow / fade on base layer */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent z-0 pointer-events-none" />
+
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-10 z-10">
+          <div className="w-full max-w-md">
+            <h3 className="text-4xl md:text-5xl lg:text-5xl font-bold tracking-tight mb-8 text-white text-center">
+              TRAPPED
+            </h3>
+            <ul className="space-y-6 text-base md:text-lg lg:text-xl text-[#B3B3B3] flex flex-col items-center">
+              <li className="flex items-center gap-4 w-full max-w-[300px]">
+                <span className="text-2xl flex-shrink-0">⏰</span>
+                <span className="leading-relaxed text-left flex-1">Trading time for money</span>
+              </li>
+              <li className="flex items-center gap-4 w-full max-w-[300px]">
+                <span className="text-2xl flex-shrink-0">💼</span>
+                <span className="leading-relaxed text-left flex-1">Someone else&apos;s vision</span>
+              </li>
+              <li className="flex items-center gap-4 w-full max-w-[300px]">
+                <span className="text-2xl flex-shrink-0">📊</span>
+                <span className="leading-relaxed text-left flex-1">One paycheck away</span>
+              </li>
+              <li className="flex items-center gap-4 w-full max-w-[300px]">
+                <span className="text-2xl flex-shrink-0">😰</span>
+                <span className="leading-relaxed text-left flex-1">Constant pressure</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* TOP LAYER: RIGHT SIDE (FREE) CLIPPED BY SLIDER */}
+      <div
+        className="absolute inset-0 w-full h-full z-20 pointer-events-none bg-[#0A0A0A]"
+        style={{
+          clipPath: `inset(0 ${100 - sliderPosition}% 0 0)`,
+        }}
+      >
+        <div className="absolute inset-0" style={{ background: "linear-gradient(145deg, #111111 0%, #000000 100%)" }} />
+        <div className="absolute inset-0 z-0 bg-black/60" />
+        {/* Adds blur/fade at the clipping edge */}
+        <div
+          className="absolute inset-y-0 w-24 z-0 pointer-events-none"
+          style={{
+            left: `${sliderPosition}%`,
+            transform: 'translateX(-50%)',
+            background: 'linear-gradient(90deg, transparent, rgba(0,0,0,0.5) 50%, transparent)'
+          }}
+        />
+        <div className="absolute inset-0 bg-gradient-to-l from-black/80 via-black/30 to-black/80 z-0 pointer-events-none" />
+
+        <div className="absolute inset-0 flex flex-col items-center justify-center p-10 z-10">
+          <div className="w-full max-w-md">
+            <h3 className="text-4xl md:text-5xl lg:text-5xl font-bold tracking-tight mb-8 text-center" style={{ color: "#D4AF37", textShadow: "0 0 20px rgba(212, 175, 55, 0.4)" }}>
+              FREE
+            </h3>
+            <ul className="space-y-6 text-base md:text-lg lg:text-xl text-white flex flex-col items-center">
+              <li className="flex items-center gap-4 w-full max-w-[300px]">
+                <span className="text-2xl flex-shrink-0">🚀</span>
+                <span className="leading-relaxed text-left flex-1">Multiple income streams</span>
+              </li>
+              <li className="flex items-center gap-4 w-full max-w-[300px]">
+                <span className="text-2xl flex-shrink-0">💡</span>
+                <span className="leading-relaxed text-left flex-1">Your own authority</span>
+              </li>
+              <li className="flex items-center gap-4 w-full max-w-[300px]">
+                <span className="text-2xl flex-shrink-0">💰</span>
+                <span className="leading-relaxed text-left flex-1">Scalable wealth</span>
+              </li>
+              <li className="flex items-center gap-4 w-full max-w-[300px]">
+                <span className="text-2xl flex-shrink-0">😌</span>
+                <span className="leading-relaxed text-left flex-1">True freedom</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      {/* DRAGGABLE VERTICAL HANDLE & GOLDEN DIVIDER */}
+      <motion.div
+        className="absolute top-0 bottom-0 w-[2px] z-30 flex items-center justify-center pointer-events-none"
+        style={{
+          left: `${sliderPosition}%`,
+          background: "linear-gradient(180deg, transparent 0%, #D4AF37 50%, transparent 100%)",
+          boxShadow: "0 0 15px rgba(212, 175, 55, 1), 0 0 30px rgba(212, 175, 55, 0.5)",
+        }}
+      >
+        <div
+          className="absolute transform w-14 h-14 flex items-center justify-center transition-transform duration-200 group-hover:scale-110 pointer-events-none"
+          style={{
+            backgroundColor: "#0A0A0A",
+            border: "2px solid #D4AF37",
+            borderRadius: "50%",
+            boxShadow: "0 0 20px rgba(212, 175, 55, 0.8), inset 0 0 10px rgba(212, 175, 55, 0.3)",
+          }}
+        >
+          <svg className="w-6 h-6 flex-shrink-0" fill="#D4AF37" viewBox="0 0 24 24">
+            <path d="M8 5v14l-6-7 6-7zM16 5v14l6-7-6-7z" />
+          </svg>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+// Rotating dramatic background
+function DramaticBackground() {
+  const groupRef = useRef<Group>(null);
+
+  useFrame(({ clock }) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y = clock.elapsedTime * 0.05;
+      groupRef.current.rotation.x = Math.sin(clock.elapsedTime * 0.3) * 0.08;
+    }
+  });
+
+  return (
+    <group ref={groupRef}>
+      <Sphere args={[3.5, 64, 64]} position={[-4, 2, -3]}>
+        <meshStandardMaterial
+          color="#0A0A0A"
+          metalness={0.1}
+          roughness={0.8}
+          emissive="#0A0A0A"
+          emissiveIntensity={0.8}
+        />
+      </Sphere>
+      <Sphere args={[2.2, 64, 64]} position={[3.5, -2, -2]}>
+        <meshStandardMaterial
+          color="#D4AF37"
+          metalness={0.2}
+          roughness={0.7}
+          emissive="#D4AF37"
+          emissiveIntensity={0.4}
+        />
+      </Sphere>
+    </group>
+  );
+}
+
+const painPoints = [
+  { icon: "⏰", title: "WASTED TIME", desc: "2 hours lost in traffic daily" },
+  { icon: "📧", title: "BURNOUT EMAILS", desc: "Work bleeds into dinner time" },
+  { icon: "😰", title: "CONSTANT ANXIETY", desc: "One layoff away from crisis" },
+  { icon: "💔", title: "MISSING LIFE", desc: "Your kids grow up around a laptop" },
+  { icon: "🔄", title: "ENDLESS CYCLE", desc: "40 years of the same paycheck" },
+  { icon: "😕", title: "NO CONTROL", desc: "Someone else decides your value" },
+];
+
+const successStats = [
+  { number: "1,247+", label: "Professionals Transformed" },
+  { number: "₹1Cr+", label: "Combined Income Generated" },
+  { number: "47%", label: "Left Corporate Within 6 Months" },
+];
+
+const testimonials2 = [
+  {
+    quote: "I was 15 years deep in IT. Now I have 3 clients paying ₹50k+ monthly while still employed.",
+    author: "Rajesh K.",
+    role: "IT Leader, Bangalore"
+  },
+  {
+    quote: "The framework showed me my expertise was worth ₹5L+ annually. I launched my consulting offer.",
+    author: "Priya M.",
+    role: "Finance Manager, Mumbai"
+  },
+  {
+    quote: "Built an AI-powered product that runs on autopilot. Changed my entire trajectory.",
+    author: "Amit P.",
+    role: "Operations Head, Pune"
+  },
+  {
+    quote: "15 years of experience finally feel like MY asset, not the company's.",
+    author: "Deepak S.",
+    role: "HR Director, Gurgaon"
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <motion.main
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.8 }}
+      className="relative min-h-screen overflow-x-hidden"
+      style={{ backgroundColor: "#000000" }}
+    >
+      {/* Dramatic 3D Background */}
+      <div className="pointer-events-none fixed inset-0 z-0 opacity-70">
+        <Canvas camera={{ position: [0, 0, 14], fov: 50 }}>
+          <ambientLight intensity={0.3} />
+          <directionalLight position={[5, 8, 5]} intensity={0.8} />
+          <Stars radius={150} depth={50} count={5000} factor={5} saturation={0.5} fade speed={1} />
+          <DramaticBackground />
+          <OrbitControls enableZoom={false} enablePan={false} enableRotate={false} />
+        </Canvas>
+      </div>
+
+      {/* Header */}
+      <header className="sticky top-0 z-50 border-b backdrop-blur-md" style={{ backgroundColor: "rgba(0, 0, 0, 0.95)", borderColor: "rgba(212, 175, 55, 0.2)" }}>
+        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
+          <motion.div
+            className="flex-shrink-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
           >
             <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+              src="/shobhit-logo.png"
+              alt="Shobhit - The Transformer"
+              width={140}
+              height={50}
+              priority
+              style={{ height: "auto", maxHeight: "50px", width: "auto" }}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </motion.div>
+          <ul className="flex flex-wrap gap-6 text-sm md:gap-8" style={{ color: "#B3B3B3" }}>
+            <li><a href="#problem" className="transition" style={{ color: "#B3B3B3" }} onMouseEnter={(e) => (e.currentTarget.style.color = "#F5D76E")} onMouseLeave={(e) => (e.currentTarget.style.color = "#B3B3B3")}>The Problem</a></li>
+            <li><a href="#transformation" className="transition" style={{ color: "#B3B3B3" }} onMouseEnter={(e) => (e.currentTarget.style.color = "#F5D76E")} onMouseLeave={(e) => (e.currentTarget.style.color = "#B3B3B3")}>Your Path</a></li>
+            <li><a href="#proof" className="transition" style={{ color: "#B3B3B3" }} onMouseEnter={(e) => (e.currentTarget.style.color = "#F5D76E")} onMouseLeave={(e) => (e.currentTarget.style.color = "#B3B3B3")}>Proof</a></li>
+            <li><a href="#cta" className="rounded-full border px-5 py-2 transition" style={{ borderColor: "#D4AF37", color: "#B3B3B3" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#F5D76E"; e.currentTarget.style.color = "#FFFFFF"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#D4AF37"; e.currentTarget.style.color = "#B3B3B3"; }}>Join Now</a></li>
+          </ul>
+        </nav>
+      </header>
+
+      {/* HERO SECTION - EMOTIONAL, DRAMATIC */}
+      <section className="relative mx-auto max-w-7xl px-6 py-40 md:px-10 flex items-center min-h-screen">
+        <motion.div className="relative z-10 w-full">
+          {/* Top accent */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            className="inline-flex items-center gap-3 mb-8"
           >
-            Documentation
-          </a>
+            <div className="h-1 w-12" style={{ background: "linear-gradient(90deg, #D4AF37, #F5D76E)" }}></div>
+            <span className="font-semibold text-sm uppercase tracking-wider" style={{ color: "#F5D76E" }}>The awakening begins</span>
+          </motion.div>
+
+          {/* Main headline with word-by-word reveal */}
+          <motion.div className="mb-10">
+            <AnimatedTextReveal
+              text="From Corporate Burnout To Your Own ₹1 Crore Consulting Business"
+              className="text-5xl md:text-7xl font-black leading-tight text-white"
+            />
+          </motion.div>
+
+          {/* Subheading */}
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.8, duration: 0.6 }}
+            className="text-xl md:text-2xl max-w-3xl leading-relaxed mb-12"
+            style={{ color: "#B3B3B3" }}
+          >
+            A structured, proven system to escape corporate burnout and build
+            <span className="text-transparent bg-clip-text" style={{ backgroundImage: "linear-gradient(90deg, #D4AF37, #F5D76E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}> multiple income streams </span>
+            in just 21 days — without leaving your job early.
+          </motion.p>
+
+          {/* Countdown Timer */}
+          <CountdownTimer />
+
+          {/* CTA Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2, duration: 0.6 }}
+            className="flex flex-wrap gap-6 mb-16"
+          >
+            <a href="https://learn.transformershub.in/l/502f6ef596" className="btn-primary-xl">
+              Reserve Your Seat
+            </a>
+          </motion.div>
+
+          {/* Stats info */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.5 }}
+            className="flex gap-8 text-sm"
+          >
+            <div className="border-l pl-4" style={{ borderColor: "#D4AF37" }}>
+              <p className="font-bold text-2xl" style={{ color: "#F5D76E" }}>1,247+</p>
+              <p style={{ color: "#6B7280" }}>Lives Changed</p>
+            </div>
+            <div className="border-l pl-4" style={{ borderColor: "#D4AF37" }}>
+              <p className="font-bold text-2xl" style={{ color: "#F5D76E" }}>21 Days</p>
+              <p style={{ color: "#6B7280" }}>To Your First Offer</p>
+            </div>
+            <div className="border-l pl-4" style={{ borderColor: "#D4AF37" }}>
+              <p className="font-bold text-2xl" style={{ color: "#F5D76E" }}>10 April, 8:00 PM</p>
+              <p style={{ color: "#6B7280" }}>Daily Live Sessions</p>
+            </div>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* PROBLEM SECTION - DARK, RELATABLE, UNCOMFORTABLE */}
+      <section id="problem" className="relative mx-auto max-w-7xl px-6 py-32 md:px-10">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-20"
+        >
+          <h2 className="text-5xl md:text-6xl font-black mb-6" style={{ color: "#FFFFFF" }}>
+            Does This Hit Close?
+          </h2>
+          <p className="text-xl max-w-2xl mx-auto" style={{ color: "#B3B3B3" }}>
+            You built a world-class career. But somewhere along the way, your dream became someone else&apos;s asset.
+          </p>
+        </motion.div>
+
+        {/* Pain points grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {painPoints.map((item, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.1, duration: 0.6 }}
+              className="group relative rounded-xl p-8 transition-all duration-300"
+              style={{ backgroundColor: "rgba(10, 10, 10, 0.6)", border: "1px solid rgba(212, 175, 55, 0.2)" }}
+            >
+              <div className="relative z-10">
+                <div className="text-4xl mb-4">{item.icon}</div>
+                <h3 className="text-xl font-bold mb-2" style={{ color: "#F5D76E" }}>{item.title}</h3>
+                <p style={{ color: "#B3B3B3" }}>{item.desc}</p>
+              </div>
+            </motion.div>
+          ))}
         </div>
-      </main>
-    </div>
+
+        {/* Dark truth statement */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6, duration: 0.8 }}
+          className="mt-20 rounded-3xl p-12 text-center backdrop-blur-md"
+          style={{ backgroundColor: "rgba(10, 10, 10, 0.7)", border: "1px solid rgba(212, 175, 55, 0.3)", boxShadow: "0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05)" }}
+        >
+          <h3 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: "#FFFFFF" }}>
+            The Hard Truth
+          </h3>
+          <p className="text-xl max-w-2xl mx-auto" style={{ color: "#B3B3B3" }}>
+            Your expertise isn&apos;t your asset — <span style={{ color: "#F5D76E", fontWeight: "bold" }}>the company&apos;s payroll is.</span> You stop working, you stop earning. That&apos;s not wealth. That&apos;s a beautiful cage.
+          </p>
+        </motion.div>
+      </section>
+
+      {/* INTERACTIVE COMPARISON - BEFORE vs AFTER */}
+      <section id="transformation" className="relative mx-auto max-w-6xl px-6 py-32 md:px-10">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-5xl md:text-6xl font-black mb-4" style={{ color: "#FFFFFF" }}>
+            Your Transformation Awaits
+          </h2>
+          <p className="text-xl" style={{ color: "#B3B3B3" }}>
+            Drag the slider. See the shift. This is your future.
+          </p>
+        </motion.div>
+
+        <ComparisonSlider />
+
+        {/* Path to freedom */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.4, duration: 0.8 }}
+          className="rounded-2xl p-12"
+          style={{ backgroundColor: "rgba(17, 17, 17, 0.7)", border: "1px solid #D4AF37" }}
+        >
+          <h3 className="text-3xl font-bold mb-8 text-center" style={{ color: "#FFFFFF" }}>
+            Your Path to Freedom
+          </h3>
+          <div className="grid md:grid-cols-4 gap-6">
+            {[
+              { step: "1", title: "EXPERTISE", desc: "Identify your 10+ years of skills" },
+              { step: "2", title: "CONSULTING", desc: "Launch your first paid offer" },
+              { step: "3", title: "SCALE", desc: "Build with AI products & leverage" },
+              { step: "4", title: "FREEDOM", desc: "Reach ₹1 Crore+ in income" },
+            ].map((item) => (
+              <div key={item.step} className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full text-2xl font-bold mb-4" style={{ background: "linear-gradient(135deg, #D4AF37, #F5D76E)", color: "#000000" }}>
+                  {item.step}
+                </div>
+                <h4 className="font-bold mb-2" style={{ color: "#FFFFFF" }}>{item.title}</h4>
+                <p className="text-sm" style={{ color: "#B3B3B3" }}>{item.desc}</p>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* PROOF / RESULTS SECTION */}
+      <section id="proof" className="relative mx-auto max-w-7xl px-6 py-32 md:px-10">
+        {/* Impact stats */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20"
+        >
+          {successStats.map((stat, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: idx * 0.2, duration: 0.6 }}
+              className="rounded-2xl p-12 text-center backdrop-blur-sm"
+              style={{ backgroundColor: "rgba(10, 10, 10, 0.7)", border: "1px solid rgba(212, 175, 55, 0.3)", boxShadow: "0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.04)" }}
+            >
+              <motion.div
+                className="text-5xl md:text-6xl font-black mb-4"
+                style={{ backgroundImage: "linear-gradient(135deg, #D4AF37, #F5D76E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", color: "transparent" }}
+                whileInView={{ scale: [0.8, 1.1, 1] }}
+                transition={{ duration: 0.8 }}
+              >
+                {stat.number}
+              </motion.div>
+              <p className="text-xl" style={{ color: "#B3B3B3" }}>{stat.label}</p>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Testimonials */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="mb-20"
+        >
+          <h2 className="text-4xl md:text-5xl font-black mb-12 text-center" style={{ color: "#FFFFFF" }}>
+            Real Transformations
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {testimonials2.map((t, idx) => (
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, x: idx % 2 === 0 ? -30 : 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: idx * 0.15, duration: 0.6 }}
+                className="relative rounded-xl p-8 transition-all duration-300 backdrop-blur-sm"
+                style={{ backgroundColor: "rgba(10, 10, 10, 0.6)", border: "1px solid rgba(212, 175, 55, 0.2)" }}
+              >
+                <div className="flex gap-4 mb-4">
+                  {[...Array(5)].map((_, i) => (
+                    <span key={i} style={{ color: "#F5D76E" }}>★</span>
+                  ))}
+                </div>
+                <p className="text-lg mb-6 italic" style={{ color: "#FFFFFF" }}>&quot;{t.quote}&quot;</p>
+                <div>
+                  <p className="font-bold" style={{ color: "#F5D76E" }}>{t.author}</p>
+                  <p className="text-sm" style={{ color: "#B3B3B3" }}>{t.role}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+      </section>
+
+      {/* MENTOR SECTION */}
+      <section className="relative mx-auto max-w-7xl px-6 py-32 md:px-10">
+        <motion.div
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="grid gap-12 md:grid-cols-2"
+        >
+          {/* Mentor info */}
+          <div className="flex flex-col justify-center">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2, duration: 0.6 }}
+            >
+              <p className="font-bold mb-2" style={{ color: "#F5D76E" }}>YOUR GUIDE</p>
+              <h2 className="text-5xl md:text-6xl font-black mb-4" style={{ color: "#FFFFFF" }}>
+                Meet Shobhit Singhal
+              </h2>
+              <p className="text-xl mb-8" style={{ color: "#B3B3B3" }}>
+                TEDx Speaker • 2x TEDx Organizer • Consulting Mentor
+              </p>
+              <p className="text-lg mb-8 leading-relaxed" style={{ color: "#B3B3B3" }}>
+                With 7+ years in corporate and 10+ years of mentoring, Shobhit has helped 100+ professionals build ₹1 Crore+ in consulting income. He&apos;s lived this transformation — and now shows you the exact system.
+              </p>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div className="rounded-lg p-6 text-center" style={{ backgroundColor: "rgba(17, 17, 17, 0.8)", border: "1px solid #D4AF37" }}>
+                  <p className="text-3xl font-bold" style={{ color: "#F5D76E" }}>7+</p>
+                  <p className="text-xs uppercase mt-2" style={{ color: "#6B7280" }}>Corporate Years</p>
+                </div>
+                <div className="rounded-lg p-6 text-center" style={{ backgroundColor: "rgba(17, 17, 17, 0.8)", border: "1px solid #D4AF37" }}>
+                  <p className="text-3xl font-bold" style={{ color: "#F5D76E" }}>100+</p>
+                  <p className="text-xs uppercase mt-2" style={{ color: "#6B7280" }}>Mentored</p>
+                </div>
+                <div className="rounded-lg p-6 text-center" style={{ backgroundColor: "rgba(17, 17, 17, 0.8)", border: "1px solid #D4AF37" }}>
+                  <p className="text-3xl font-bold" style={{ color: "#F5D76E" }}>3</p>
+                  <p className="text-xs uppercase mt-2" style={{ color: "#6B7280" }}>Programs</p>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* Mentor image */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3, duration: 0.8 }}
+            className="relative"
+          >
+            <div className="relative rounded-2xl overflow-hidden h-96 md:h-full" style={{ border: "1px solid #D4AF37" }}>
+              <img
+                src="https://corporate.transformershub.in/assets/shobhit-singhal-BKMCfdCY.jpg"
+                alt="Shobhit Singhal"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" style={{ backgroundImage: "linear-gradient(to top, #000000, rgba(11, 15, 20, 0), transparent)" }}></div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* CTA SECTION - FINAL PUSH */}
+      <section id="cta" className="relative mx-auto max-w-5xl px-6 py-40 md:px-10">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="rounded-3xl p-16 text-center relative overflow-hidden backdrop-blur-md"
+          style={{ backgroundColor: "rgba(10, 10, 10, 0.9)", border: "1px solid rgba(212, 175, 55, 0.3)", boxShadow: "0 25px 50px rgba(212, 175, 55, 0.15), 0 25px 80px rgba(0, 0, 0, 0.4)" }}
+        >
+          {/* Background glow effect */}
+          <div className="absolute -top-40 -right-40 w-80 h-80 rounded-full blur-3xl" style={{ backgroundColor: "rgba(212, 175, 55, 0.15)" }}></div>
+          <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full blur-3xl" style={{ backgroundColor: "rgba(245, 215, 110, 0.1)" }}></div>
+
+          <motion.div className="relative z-10">
+            <h2 className="text-5xl md:text-6xl font-black mb-6" style={{ color: "#FFFFFF" }}>
+              Ready to Reclaim Your Freedom?
+            </h2>
+            <p className="text-xl mb-12 max-w-2xl mx-auto" style={{ color: "#B3B3B3" }}>
+              The Corporate Freedom Series starts <span style={{ color: "#F5D76E", fontWeight: "bold" }}>10 April, 8:00 PM</span>.
+              21 days of live guidance. Proven system. Real results.
+            </p>
+
+            <div className="flex flex-col md:flex-row gap-6 justify-center mb-8">
+              <a href="https://learn.transformershub.in/l/502f6ef596" className="btn-primary-xl">
+                Reserve Your Seat Now
+              </a>
+            </div>
+
+            <p className="text-sm italic" style={{ color: "#B3B3B3" }}>
+              Limited seats for live participation. Early bird pricing ends soon.
+            </p>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t py-12 px-6" style={{ backgroundColor: "rgba(0, 0, 0, 0.95)", borderColor: "rgba(212, 175, 55, 0.2)" }}>
+        <div className="max-w-7xl mx-auto text-center text-sm" style={{ color: "#B3B3B3" }}>
+          <p>© 2026 Corporate Freedom Series • Built for Transformation</p>
+        </div>
+      </footer>
+
+      <style jsx global>{`
+        :root {
+          --bg-primary: #000000 !important;
+          --bg-secondary: #0A0A0A !important;
+          --accent-primary: #D4AF37 !important;
+          --accent-cyan: #F5D76E !important;
+          --text-primary: #FFFFFF !important;
+          --text-secondary: #B3B3B3 !important;
+          --text-muted: #808080 !important;
+          --border: #1A1A1A !important;
+        }
+
+        * {
+          color-scheme: dark !important;
+        }
+
+        html {
+          scroll-behavior: smooth !important;
+          background-color: var(--bg-primary) !important;
+        }
+
+        body {
+          background-color: var(--bg-primary) !important;
+          color: var(--text-primary) !important;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif !important;
+        }
+
+        a {
+          color: var(--text-secondary) !important;
+          text-decoration: none !important;
+          transition: color 0.3s ease !important;
+        }
+
+        a:hover {
+          color: var(--accent-cyan) !important;
+        }
+
+        .btn-primary-xl {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          border-radius: 12px !important;
+          padding: 1.25rem 3rem !important;
+          font-size: 1.1rem !important;
+          font-weight: 700 !important;
+          background: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-cyan) 100%) !important;
+          color: var(--bg-primary) !important;
+          text-decoration: none !important;
+          border: none !important;
+          box-shadow: 0 20px 50px rgba(212, 175, 55, 0.3) !important;
+          transition: all 0.3s ease !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.05em !important;
+          cursor: pointer !important;
+          position: relative !important;
+          overflow: hidden !important;
+        }
+        
+        .btn-primary-xl::before {
+          content: '' !important;
+          position: absolute !important;
+          top: 0 !important;
+          left: -100% !important;
+          width: 100% !important;
+          height: 100% !important;
+          background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-primary) 100%) !important;
+          transition: left 0.3s ease !important;
+          z-index: -1 !important;
+        }
+
+        .btn-primary-xl:hover {
+          transform: translateY(-4px) !important;
+          box-shadow: 0 30px 80px rgba(212, 175, 55, 0.5) !important;
+        }
+
+        .btn-secondary-xl {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          border-radius: 12px !important;
+          padding: 1.25rem 3rem !important;
+          font-size: 1.1rem !important;
+          font-weight: 700 !important;
+          background: rgba(212, 175, 55, 0.15) !important;
+          color: var(--accent-cyan) !important;
+          border: 1.5px solid var(--accent-primary) !important;
+          text-decoration: none !important;
+          transition: all 0.3s ease !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.05em !important;
+          cursor: pointer !important;
+        }
+        
+        .btn-secondary-xl:hover {
+          transform: translateY(-4px) !important;
+          border-color: var(--accent-cyan) !important;
+          background: rgba(212, 175, 55, 0.25) !important;
+          box-shadow: 0 15px 40px rgba(212, 175, 55, 0.25) !important;
+        }
+
+        .btn-outline-xl {
+          display: inline-flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          border-radius: 12px !important;
+          padding: 1.25rem 3rem !important;
+          font-size: 1.1rem !important;
+          font-weight: 700 !important;
+          background: transparent !important;
+          color: var(--accent-cyan) !important;
+          border: 1.5px solid var(--accent-cyan) !important;
+          cursor: pointer !important;
+          text-decoration: none !important;
+          transition: all 0.3s ease !important;
+          text-transform: uppercase !important;
+          letter-spacing: 0.05em !important;
+        }
+        
+        .btn-outline-xl:hover {
+          transform: translateY(-4px) !important;
+          border-color: white !important;
+          background: rgba(245, 215, 110, 0.1) !important;
+          box-shadow: 0 15px 40px rgba(245, 215, 110, 0.2) !important;
+        }
+      `}</style>
+    </motion.main>
   );
 }
