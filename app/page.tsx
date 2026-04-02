@@ -134,31 +134,32 @@ function ComparisonSlider() {
     >
       {/* BASE LAYER: LEFT SIDE (TRAPPED) ALWAYS VISIBLE */}
       <div className="absolute inset-0 w-full h-full bg-[#000000]">
-        <div className="absolute inset-0 z-0 bg-black/70" />
+        <Image src="/trapped.png" alt="Trapped" fill className="object-cover grayscale-[70%]" priority />
+        <div className="absolute inset-0 z-0 bg-[rgba(0,0,0,0.65)]" />
         {/* Subtle glow / fade on base layer */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/40 to-transparent z-0 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/50 to-transparent z-0 pointer-events-none" />
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-10 z-10">
-          <div className="w-full max-w-md">
-            <h3 className="text-4xl md:text-5xl lg:text-5xl font-bold tracking-tight mb-8 text-white text-center">
+        <div className="absolute inset-0 flex flex-col items-start justify-center p-[32px] md:pl-20 z-10 w-full md:w-1/2">
+          <div className="w-full max-w-[450px] bg-black/40 backdrop-blur-sm p-8 rounded-2xl border border-white/5">
+            <h3 className="text-4xl md:text-5xl lg:text-5xl font-bold tracking-tight mb-8 text-white">
               TRAPPED
             </h3>
-            <ul className="space-y-6 text-base md:text-lg lg:text-xl text-[#B3B3B3] flex flex-col items-center">
-              <li className="flex items-center gap-4 w-full max-w-[300px]">
+            <ul className="space-y-6 text-base md:text-lg lg:text-xl text-[#B3B3B3] flex flex-col">
+              <li className="flex items-center gap-4">
                 <span className="text-2xl flex-shrink-0">⏰</span>
-                <span className="leading-relaxed text-left flex-1">Trading time for money</span>
+                <span className="leading-relaxed">Trading time for money</span>
               </li>
-              <li className="flex items-center gap-4 w-full max-w-[300px]">
+              <li className="flex items-center gap-4">
                 <span className="text-2xl flex-shrink-0">💼</span>
-                <span className="leading-relaxed text-left flex-1">Someone else&apos;s vision</span>
+                <span className="leading-relaxed">Someone else&apos;s vision</span>
               </li>
-              <li className="flex items-center gap-4 w-full max-w-[300px]">
+              <li className="flex items-center gap-4">
                 <span className="text-2xl flex-shrink-0">📊</span>
-                <span className="leading-relaxed text-left flex-1">One paycheck away</span>
+                <span className="leading-relaxed">One paycheck away</span>
               </li>
-              <li className="flex items-center gap-4 w-full max-w-[300px]">
+              <li className="flex items-center gap-4">
                 <span className="text-2xl flex-shrink-0">😰</span>
-                <span className="leading-relaxed text-left flex-1">Constant pressure</span>
+                <span className="leading-relaxed">Constant pressure</span>
               </li>
             </ul>
           </div>
@@ -167,45 +168,46 @@ function ComparisonSlider() {
 
       {/* TOP LAYER: RIGHT SIDE (FREE) CLIPPED BY SLIDER */}
       <div
-        className="absolute inset-0 w-full h-full z-20 pointer-events-none bg-[#0A0A0A]"
+        className="absolute inset-0 w-full h-full z-20 pointer-events-none bg-[#0a0a0a]"
         style={{
           clipPath: `inset(0 ${100 - sliderPosition}% 0 0)`,
         }}
       >
-        <div className="absolute inset-0" style={{ background: "linear-gradient(145deg, #111111 0%, #000000 100%)" }} />
-        <div className="absolute inset-0 z-0 bg-black/60" />
+        <Image src="/free.png" alt="Free" fill className="object-cover sepia-[15%]" priority />
+        <div className="absolute inset-0 z-0 bg-[#d4af37] opacity-[0.05] mix-blend-overlay pointer-events-none" />
+        <div className="absolute inset-0 z-0 bg-black/40" />
         {/* Adds blur/fade at the clipping edge */}
         <div
           className="absolute inset-y-0 w-24 z-0 pointer-events-none"
           style={{
             left: `${sliderPosition}%`,
             transform: 'translateX(-50%)',
-            background: 'linear-gradient(90deg, transparent, rgba(0,0,0,0.5) 50%, transparent)'
+            background: 'linear-gradient(90deg, transparent, rgba(0,0,0,0.6) 50%, transparent)'
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-l from-black/80 via-black/30 to-black/80 z-0 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-l from-black/90 via-black/40 to-transparent z-0 pointer-events-none" />
 
-        <div className="absolute inset-0 flex flex-col items-center justify-center p-10 z-10">
-          <div className="w-full max-w-md">
-            <h3 className="text-4xl md:text-5xl lg:text-5xl font-bold tracking-tight mb-8 text-center" style={{ color: "#D4AF37", textShadow: "0 0 20px rgba(212, 175, 55, 0.4)" }}>
+        <div className="absolute inset-0 flex flex-col items-end justify-center p-[32px] md:pr-20 z-10 w-full pointer-events-none">
+          <div className="w-full max-w-[450px] bg-black/60 backdrop-blur-sm p-8 rounded-2xl border border-[#D4AF37]/20 shadow-[0_0_30px_rgba(212,175,55,0.08)]">
+            <h3 className="text-4xl md:text-5xl lg:text-5xl font-bold tracking-tight mb-8" style={{ color: "#D4AF37", textShadow: "0 0 20px rgba(212, 175, 55, 0.4)" }}>
               FREE
             </h3>
-            <ul className="space-y-6 text-base md:text-lg lg:text-xl text-white flex flex-col items-center">
-              <li className="flex items-center gap-4 w-full max-w-[300px]">
+            <ul className="space-y-6 text-base md:text-lg lg:text-xl text-white flex flex-col">
+              <li className="flex items-center gap-4">
                 <span className="text-2xl flex-shrink-0">🚀</span>
-                <span className="leading-relaxed text-left flex-1">Multiple income streams</span>
+                <span className="leading-relaxed">Multiple income streams</span>
               </li>
-              <li className="flex items-center gap-4 w-full max-w-[300px]">
+              <li className="flex items-center gap-4">
                 <span className="text-2xl flex-shrink-0">💡</span>
-                <span className="leading-relaxed text-left flex-1">Your own authority</span>
+                <span className="leading-relaxed">Your own authority</span>
               </li>
-              <li className="flex items-center gap-4 w-full max-w-[300px]">
+              <li className="flex items-center gap-4">
                 <span className="text-2xl flex-shrink-0">💰</span>
-                <span className="leading-relaxed text-left flex-1">Scalable wealth</span>
+                <span className="leading-relaxed">Scalable wealth</span>
               </li>
-              <li className="flex items-center gap-4 w-full max-w-[300px]">
+              <li className="flex items-center gap-4">
                 <span className="text-2xl flex-shrink-0">😌</span>
-                <span className="leading-relaxed text-left flex-1">True freedom</span>
+                <span className="leading-relaxed">True freedom</span>
               </li>
             </ul>
           </div>
@@ -652,6 +654,22 @@ export default function Home() {
                   <p className="text-xs uppercase mt-2" style={{ color: "#6B7280" }}>Programs</p>
                 </div>
               </div>
+
+              {/* Authority / Proof Images */}
+              <div className="grid grid-cols-2 gap-4 mt-8">
+                <div className="rounded-[14px] p-2 bg-[#0A0A0A] border border-[#1A1A1A] shadow-sm">
+                  <div className="relative h-28 md:h-36 w-full rounded-[10px] overflow-hidden grayscale-[15%]">
+                    <Image src="/recognition.png" alt="Recognition" fill className="object-cover scale-[1.6] translate-y-[35px]" sizes="(max-width: 768px) 50vw, 30vw" />
+                  </div>
+                  <p className="text-center text-xs mt-3 mb-1 text-[#B3B3B3] uppercase tracking-wider font-semibold">Recognition</p>
+                </div>
+                <div className="rounded-[14px] p-2 bg-[#0A0A0A] border border-[#1A1A1A] shadow-sm">
+                  <div className="relative h-28 md:h-36 w-full rounded-[10px] overflow-hidden grayscale-[15%]">
+                    <Image src="/industryrecognition.png" alt="Industry presence" fill className="object-cover scale-[1.15] translate-y-[20px]" sizes="(max-width: 768px) 50vw, 30vw" />
+                  </div>
+                  <p className="text-center text-xs mt-3 mb-1 text-[#B3B3B3] uppercase tracking-wider font-semibold">Industry presence</p>
+                </div>
+              </div>
             </motion.div>
           </div>
 
@@ -663,13 +681,15 @@ export default function Home() {
             transition={{ delay: 0.3, duration: 0.8 }}
             className="relative"
           >
-            <div className="relative rounded-2xl overflow-hidden h-96 md:h-full" style={{ border: "1px solid #D4AF37" }}>
-              <img
-                src="https://corporate.transformershub.in/assets/shobhit-singhal-BKMCfdCY.jpg"
+            <div className="relative rounded-[16px] overflow-hidden h-[450px] md:h-full min-h-[450px]" style={{ border: "1px solid #D4AF37", boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }}>
+              <Image
+                src="/mentor.png"
                 alt="Shobhit Singhal"
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover object-[70%_top]"
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" style={{ backgroundImage: "linear-gradient(to top, #000000, rgba(11, 15, 20, 0), transparent)" }}></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" style={{ backgroundImage: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 25%, transparent 100%)", pointerEvents: "none" }}></div>
             </div>
           </motion.div>
         </motion.div>
