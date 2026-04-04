@@ -1,11 +1,138 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
+import { useRef, useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import type { Group } from "three";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, Sphere, Stars } from "@react-three/drei";
+
+// Mobile navigation drawer
+function MobileNav() {
+  const [open, setOpen] = useState(false);
+
+  const close = useCallback(() => setOpen(false), []);
+
+  // Lock body scroll when drawer is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
+
+  const links = [
+    { href: "#problem", label: "The Problem" },
+    { href: "#transformation", label: "Your Path" },
+    { href: "#proof", label: "Proof" },
+  ];
+
+  return (
+    <>
+      {/* Hamburger button */}
+      <button
+        aria-label="Open menu"
+        onClick={() => setOpen(true)}
+        className="md:hidden relative z-50 flex items-center justify-center w-11 h-11 rounded-lg"
+        style={{ backgroundColor: "rgba(212, 175, 55, 0.1)", border: "1px solid rgba(212, 175, 55, 0.3)" }}
+      >
+        <div className="flex flex-col gap-[5px]">
+          <span className="block w-5 h-[2px] rounded-full" style={{ backgroundColor: "#D4AF37" }} />
+          <span className="block w-5 h-[2px] rounded-full" style={{ backgroundColor: "#D4AF37" }} />
+          <span className="block w-5 h-[2px] rounded-full" style={{ backgroundColor: "#D4AF37" }} />
+        </div>
+      </button>
+
+      {/* Animated drawer overlay + panel */}
+      {typeof document !== "undefined" && createPortal(
+        <AnimatePresence>
+          {open && (
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.25 }}
+                className="fixed inset-0 z-[998] bg-black/70 backdrop-blur-sm"
+                onClick={close}
+              />
+
+              {/* Drawer */}
+              <motion.div
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", damping: 26, stiffness: 300 }}
+                className="fixed top-0 right-0 bottom-0 z-[999] w-[280px] flex flex-col"
+                style={{ backgroundColor: "#000000", borderLeft: "1px solid rgba(212, 175, 55, 0.25)", boxShadow: "-10px 0 40px rgba(0, 0, 0, 0.8)" }}
+              >
+                {/* Close button */}
+                <div className="flex justify-end p-4">
+                  <button
+                    aria-label="Close menu"
+                    onClick={close}
+                    className="flex items-center justify-center w-11 h-11 rounded-lg"
+                    style={{ backgroundColor: "rgba(212, 175, 55, 0.1)", border: "1px solid rgba(212, 175, 55, 0.3)" }}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" strokeWidth="2" strokeLinecap="round">
+                      <line x1="18" y1="6" x2="6" y2="18" />
+                      <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Nav links */}
+                <nav className="flex flex-col gap-2 px-6 mt-4">
+                  {links.map((link, idx) => (
+                    <motion.a
+                      key={link.href}
+                      href={link.href}
+                      onClick={close}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.1 + idx * 0.06 }}
+                      className="flex items-center min-h-[48px] px-4 rounded-xl text-base font-medium transition-colors"
+                      style={{ color: "#B3B3B3" }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.color = "#F5D76E";
+                        e.currentTarget.style.backgroundColor = "rgba(212, 175, 55, 0.08)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.color = "#B3B3B3";
+                        e.currentTarget.style.backgroundColor = "transparent";
+                      }}
+                    >
+                      {link.label}
+                    </motion.a>
+                  ))}
+                </nav>
+
+                {/* CTA at bottom of drawer */}
+                <div className="mt-auto p-6">
+                  <motion.a
+                    href="#cta"
+                    onClick={close}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.35 }}
+                    className="btn-primary-xl w-full text-center"
+                  >
+                    Join Now
+                  </motion.a>
+                </div>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
+    </>
+  );
+}
 
 // Countdown timer component
 function CountdownTimer() {
@@ -42,31 +169,31 @@ function CountdownTimer() {
       initial={{ opacity: 0, scale: 0.9 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.6 }}
-      className="rounded-3xl p-8 mb-12 backdrop-blur-md"
+      className="rounded-3xl p-4 md:p-8 mb-6 md:mb-12 backdrop-blur-md"
       style={{
         backgroundColor: "rgba(10, 10, 10, 0.9)",
         border: "1px solid rgba(212, 175, 55, 0.3)",
         boxShadow: "0 20px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)"
       }}
     >
-      <p className="text-center font-bold text-lg mb-6" style={{ color: "#F5D76E" }}>Program Starts In:</p>
-      <div className="grid grid-cols-4 gap-4">
+      <p className="text-center font-bold text-sm md:text-lg mb-3 md:mb-6" style={{ color: "#F5D76E" }}>Program Starts In:</p>
+      <div className="grid grid-cols-4 gap-2 md:gap-4">
         {[
           { value: timeLeft.days, label: "Days" },
           { value: timeLeft.hours, label: "Hours" },
           { value: timeLeft.minutes, label: "Mins" },
           { value: timeLeft.seconds, label: "Secs" },
         ].map((item, idx) => (
-          <div key={idx} className="text-center p-4 rounded-2xl" style={{ backgroundColor: "rgba(212, 175, 55, 0.1)", border: "1px solid rgba(212, 175, 55, 0.2)" }}>
+          <div key={idx} className="text-center p-2 md:p-4 rounded-2xl" style={{ backgroundColor: "rgba(212, 175, 55, 0.1)", border: "1px solid rgba(212, 175, 55, 0.2)" }}>
             <motion.div
-              className="text-3xl md:text-4xl font-black"
+              className="text-fluid-h3 font-black"
               style={{ backgroundImage: "linear-gradient(135deg, #D4AF37, #F5D76E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", color: "transparent" }}
               animate={{ scale: [1, 1.1, 1] }}
               transition={{ duration: 0.5, repeat: Infinity }}
             >
               {String(item.value).padStart(2, "0")}
             </motion.div>
-            <p className="text-xs uppercase mt-2 font-bold" style={{ color: "#B3B3B3" }}>{item.label}</p>
+            <p className="text-[10px] md:text-xs uppercase mt-2 font-bold" style={{ color: "#B3B3B3" }}>{item.label}</p>
           </div>
         ))}
       </div>
@@ -118,7 +245,7 @@ function ComparisonSlider() {
   return (
     <motion.div
       ref={containerRef}
-      className="relative w-full rounded-3xl overflow-hidden cursor-ew-resize select-none group"
+      className="relative w-full rounded-3xl overflow-hidden cursor-ew-resize select-none group min-h-[400px] md:min-h-[600px]"
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
       initial={{ opacity: 0, scale: 0.95 }}
@@ -126,7 +253,6 @@ function ComparisonSlider() {
       viewport={{ once: true }}
       transition={{ duration: 0.8, ease: "easeInOut" }}
       style={{
-        minHeight: "600px",
         backgroundColor: "#000000",
         border: "1px solid #1A1A1A",
         boxShadow: "0 20px 60px rgba(0, 0, 0, 0.8)"
@@ -134,32 +260,32 @@ function ComparisonSlider() {
     >
       {/* BASE LAYER: LEFT SIDE (TRAPPED) ALWAYS VISIBLE */}
       <div className="absolute inset-0 w-full h-full bg-[#000000]">
-        <Image src="/trapped.png" alt="Trapped" fill className="object-cover grayscale-[70%]" priority />
-        <div className="absolute inset-0 z-0 bg-[rgba(0,0,0,0.65)]" />
+        <Image src="/trapped.png" alt="Trapped" fill sizes="(max-width: 768px) 100vw, 100vw" className="object-cover grayscale-[70%]" priority />
+        <div className="absolute inset-0 z-0 bg-[rgba(0,0,0,0.35)]" />
         {/* Subtle glow / fade on base layer */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/50 to-transparent z-0 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent z-0 pointer-events-none" />
 
-        <div className="absolute inset-0 flex flex-col items-start justify-center p-[32px] md:pl-20 z-10 w-full md:w-1/2">
-          <div className="w-full max-w-[450px] bg-black/40 backdrop-blur-sm p-8 rounded-2xl border border-white/5">
-            <h3 className="text-4xl md:text-5xl lg:text-5xl font-bold tracking-tight mb-8 text-white">
+        <div className="absolute inset-0 flex flex-col items-start justify-end md:justify-center p-[16px] md:p-[32px] md:pl-16 z-10 w-full md:w-[45%]">
+          <div className="w-full max-w-[380px] bg-black/20 backdrop-blur-md p-4 md:p-6 rounded-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+            <h3 className="text-fluid-h2 font-bold tracking-tight mb-3 md:mb-6 text-white" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
               TRAPPED
             </h3>
-            <ul className="space-y-6 text-base md:text-lg lg:text-xl text-[#B3B3B3] flex flex-col">
-              <li className="flex items-center gap-4">
-                <span className="text-2xl flex-shrink-0">⏰</span>
-                <span className="leading-relaxed">Trading time for money</span>
+            <ul className="space-y-3 md:space-y-5 text-fluid-p text-white/90 flex flex-col">
+              <li className="flex items-center gap-3 md:gap-4">
+                <span className="text-xl md:text-2xl flex-shrink-0">⏰</span>
+                <span className="leading-relaxed" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>Trading time for money</span>
               </li>
-              <li className="flex items-center gap-4">
-                <span className="text-2xl flex-shrink-0">💼</span>
-                <span className="leading-relaxed">Someone else&apos;s vision</span>
+              <li className="flex items-center gap-3 md:gap-4">
+                <span className="text-xl md:text-2xl flex-shrink-0">💼</span>
+                <span className="leading-relaxed" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>Someone else&apos;s vision</span>
               </li>
-              <li className="flex items-center gap-4">
-                <span className="text-2xl flex-shrink-0">📊</span>
-                <span className="leading-relaxed">One paycheck away</span>
+              <li className="flex items-center gap-3 md:gap-4">
+                <span className="text-xl md:text-2xl flex-shrink-0">📊</span>
+                <span className="leading-relaxed" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>One paycheck away</span>
               </li>
-              <li className="flex items-center gap-4">
-                <span className="text-2xl flex-shrink-0">😰</span>
-                <span className="leading-relaxed">Constant pressure</span>
+              <li className="flex items-center gap-3 md:gap-4">
+                <span className="text-xl md:text-2xl flex-shrink-0">😰</span>
+                <span className="leading-relaxed" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>Constant pressure</span>
               </li>
             </ul>
           </div>
@@ -173,9 +299,9 @@ function ComparisonSlider() {
           clipPath: `inset(0 ${100 - sliderPosition}% 0 0)`,
         }}
       >
-        <Image src="/free.png" alt="Free" fill className="object-cover sepia-[15%]" priority />
+        <Image src="/free.png" alt="Free" fill sizes="(max-width: 768px) 100vw, 100vw" className="object-cover sepia-[15%]" priority />
         <div className="absolute inset-0 z-0 bg-[#d4af37] opacity-[0.05] mix-blend-overlay pointer-events-none" />
-        <div className="absolute inset-0 z-0 bg-black/40" />
+        <div className="absolute inset-0 z-0 bg-black/25" />
         {/* Adds blur/fade at the clipping edge */}
         <div
           className="absolute inset-y-0 w-24 z-0 pointer-events-none"
@@ -185,29 +311,29 @@ function ComparisonSlider() {
             background: 'linear-gradient(90deg, transparent, rgba(0,0,0,0.6) 50%, transparent)'
           }}
         />
-        <div className="absolute inset-0 bg-gradient-to-l from-black/90 via-black/40 to-transparent z-0 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-l from-black/60 via-black/25 to-transparent z-0 pointer-events-none" />
 
-        <div className="absolute inset-0 flex flex-col items-end justify-center p-[32px] md:pr-20 z-10 w-full pointer-events-none">
-          <div className="w-full max-w-[450px] bg-black/60 backdrop-blur-sm p-8 rounded-2xl border border-[#D4AF37]/20 shadow-[0_0_30px_rgba(212,175,55,0.08)]">
-            <h3 className="text-4xl md:text-5xl lg:text-5xl font-bold tracking-tight mb-8" style={{ color: "#D4AF37", textShadow: "0 0 20px rgba(212, 175, 55, 0.4)" }}>
+        <div className="absolute inset-0 flex flex-col items-end justify-end md:justify-center p-[16px] md:p-[32px] md:pr-16 z-10 w-full pointer-events-none">
+          <div className="w-full max-w-[380px] bg-black/20 backdrop-blur-md p-4 md:p-6 rounded-2xl border border-[#D4AF37]/20 shadow-[0_8px_32px_rgba(212,175,55,0.1)]">
+            <h3 className="text-fluid-h2 font-bold tracking-tight mb-3 md:mb-6" style={{ color: "#D4AF37", textShadow: "0 0 20px rgba(212, 175, 55, 0.5), 0 2px 8px rgba(0,0,0,0.5)" }}>
               FREE
             </h3>
-            <ul className="space-y-6 text-base md:text-lg lg:text-xl text-white flex flex-col">
-              <li className="flex items-center gap-4">
-                <span className="text-2xl flex-shrink-0">🚀</span>
-                <span className="leading-relaxed">Multiple income streams</span>
+            <ul className="space-y-3 md:space-y-5 text-fluid-p text-white flex flex-col">
+              <li className="flex items-center gap-3 md:gap-4">
+                <span className="text-xl md:text-2xl flex-shrink-0">🚀</span>
+                <span className="leading-relaxed" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>Multiple income streams</span>
               </li>
-              <li className="flex items-center gap-4">
-                <span className="text-2xl flex-shrink-0">💡</span>
-                <span className="leading-relaxed">Your own authority</span>
+              <li className="flex items-center gap-3 md:gap-4">
+                <span className="text-xl md:text-2xl flex-shrink-0">💡</span>
+                <span className="leading-relaxed" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>Your own authority</span>
               </li>
-              <li className="flex items-center gap-4">
-                <span className="text-2xl flex-shrink-0">💰</span>
-                <span className="leading-relaxed">Scalable wealth</span>
+              <li className="flex items-center gap-3 md:gap-4">
+                <span className="text-xl md:text-2xl flex-shrink-0">💰</span>
+                <span className="leading-relaxed" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>Scalable wealth</span>
               </li>
-              <li className="flex items-center gap-4">
-                <span className="text-2xl flex-shrink-0">😌</span>
-                <span className="leading-relaxed">True freedom</span>
+              <li className="flex items-center gap-3 md:gap-4">
+                <span className="text-xl md:text-2xl flex-shrink-0">😌</span>
+                <span className="leading-relaxed" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>True freedom</span>
               </li>
             </ul>
           </div>
@@ -337,7 +463,7 @@ export default function Home() {
 
       {/* Header */}
       <header className="sticky top-0 z-50 border-b backdrop-blur-md" style={{ backgroundColor: "rgba(0, 0, 0, 0.95)", borderColor: "rgba(212, 175, 55, 0.2)" }}>
-        <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
+        <nav className="mx-auto flex max-w-7xl items-center justify-between px-4 py-2 md:px-10 md:py-4">
           <motion.div
             className="flex-shrink-0"
             initial={{ opacity: 0 }}
@@ -350,37 +476,59 @@ export default function Home() {
               width={140}
               height={50}
               priority
-              style={{ height: "auto", maxHeight: "50px", width: "auto" }}
+              style={{ height: "auto", maxHeight: "42px", width: "auto" }}
             />
           </motion.div>
-          <ul className="flex flex-wrap gap-6 text-sm md:gap-8" style={{ color: "#B3B3B3" }}>
-            <li><a href="#problem" className="transition" style={{ color: "#B3B3B3" }} onMouseEnter={(e) => (e.currentTarget.style.color = "#F5D76E")} onMouseLeave={(e) => (e.currentTarget.style.color = "#B3B3B3")}>The Problem</a></li>
-            <li><a href="#transformation" className="transition" style={{ color: "#B3B3B3" }} onMouseEnter={(e) => (e.currentTarget.style.color = "#F5D76E")} onMouseLeave={(e) => (e.currentTarget.style.color = "#B3B3B3")}>Your Path</a></li>
-            <li><a href="#proof" className="transition" style={{ color: "#B3B3B3" }} onMouseEnter={(e) => (e.currentTarget.style.color = "#F5D76E")} onMouseLeave={(e) => (e.currentTarget.style.color = "#B3B3B3")}>Proof</a></li>
-            <li><a href="#cta" className="rounded-full border px-5 py-2 transition" style={{ borderColor: "#D4AF37", color: "#B3B3B3" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#F5D76E"; e.currentTarget.style.color = "#FFFFFF"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#D4AF37"; e.currentTarget.style.color = "#B3B3B3"; }}>Join Now</a></li>
+
+          {/* Desktop nav — hidden on mobile */}
+          <ul className="hidden md:flex gap-8 text-sm items-center" style={{ color: "#B3B3B3" }}>
+            <li><a href="#problem" className="transition inline-flex items-center justify-center min-h-[44px] min-w-[44px]" style={{ color: "#B3B3B3" }} onMouseEnter={(e) => (e.currentTarget.style.color = "#F5D76E")} onMouseLeave={(e) => (e.currentTarget.style.color = "#B3B3B3")}>The Problem</a></li>
+            <li><a href="#transformation" className="transition inline-flex items-center justify-center min-h-[44px] min-w-[44px]" style={{ color: "#B3B3B3" }} onMouseEnter={(e) => (e.currentTarget.style.color = "#F5D76E")} onMouseLeave={(e) => (e.currentTarget.style.color = "#B3B3B3")}>Your Path</a></li>
+            <li><a href="#proof" className="transition inline-flex items-center justify-center min-h-[44px] min-w-[44px]" style={{ color: "#B3B3B3" }} onMouseEnter={(e) => (e.currentTarget.style.color = "#F5D76E")} onMouseLeave={(e) => (e.currentTarget.style.color = "#B3B3B3")}>Proof</a></li>
+            <li><a href="#cta" className="inline-flex items-center justify-center min-h-[44px] min-w-[44px] rounded-full border px-5 py-2 transition" style={{ borderColor: "#D4AF37", color: "#B3B3B3" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#F5D76E"; e.currentTarget.style.color = "#FFFFFF"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#D4AF37"; e.currentTarget.style.color = "#B3B3B3"; }}>Join Now</a></li>
           </ul>
+
+          {/* Mobile hamburger + drawer */}
+          <MobileNav />
         </nav>
       </header>
 
       {/* HERO SECTION - EMOTIONAL, DRAMATIC */}
-      <section className="relative mx-auto max-w-7xl px-6 py-40 md:px-10 flex items-center min-h-screen">
+      <section className="relative mx-auto max-w-7xl px-4 py-16 md:px-10 md:py-40 flex items-center min-h-[85vh] md:min-h-screen">
+        {/* Hero background image */}
+        <div className="absolute inset-0 z-0 overflow-hidden rounded-none">
+          <Image
+            src="/hero-bg.png"
+            alt=""
+            fill
+            className="object-cover object-center"
+            sizes="100vw"
+            priority
+          />
+          {/* Dark overlay for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80" />
+          {/* Gold tint for premium feel */}
+          <div className="absolute inset-0 bg-[#D4AF37] opacity-[0.03] mix-blend-overlay" />
+          {/* Bottom fade to black for smooth section transition */}
+          <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent" />
+        </div>
         <motion.div className="relative z-10 w-full">
           {/* Top accent */}
           <motion.div
             initial={{ opacity: 0, scale: 0.8 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
-            className="inline-flex items-center gap-3 mb-8"
+            className="inline-flex items-center gap-3 mb-4 md:mb-8"
           >
             <div className="h-1 w-12" style={{ background: "linear-gradient(90deg, #D4AF37, #F5D76E)" }}></div>
             <span className="font-semibold text-sm uppercase tracking-wider" style={{ color: "#F5D76E" }}>The awakening begins</span>
           </motion.div>
 
           {/* Main headline with word-by-word reveal */}
-          <motion.div className="mb-10">
+          <motion.div className="mb-6 md:mb-10">
             <AnimatedTextReveal
               text="From Corporate Burnout To Your Own ₹1 Crore Consulting Business"
-              className="text-5xl md:text-7xl font-black leading-tight text-white"
+              className="text-fluid-h1 font-black leading-tight text-white"
             />
           </motion.div>
 
@@ -389,7 +537,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.8, duration: 0.6 }}
-            className="text-xl md:text-2xl max-w-3xl leading-relaxed mb-12"
+            className="text-fluid-p max-w-3xl leading-relaxed mb-8 md:mb-12"
             style={{ color: "#B3B3B3" }}
           >
             A structured, proven system to escape corporate burnout and build
@@ -405,7 +553,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.2, duration: 0.6 }}
-            className="flex flex-wrap gap-6 mb-16"
+            className="flex flex-wrap gap-4 md:gap-6 mb-8 md:mb-16"
           >
             <a href="https://learn.transformershub.in/l/502f6ef596" className="btn-primary-xl">
               Reserve Your Seat
@@ -417,7 +565,7 @@ export default function Home() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5 }}
-            className="flex gap-8 text-sm"
+            className="flex flex-wrap gap-4 md:gap-8 text-sm"
           >
             <div className="border-l pl-4" style={{ borderColor: "#D4AF37" }}>
               <p className="font-bold text-2xl" style={{ color: "#F5D76E" }}>1,247+</p>
@@ -436,18 +584,18 @@ export default function Home() {
       </section>
 
       {/* PROBLEM SECTION - DARK, RELATABLE, UNCOMFORTABLE */}
-      <section id="problem" className="relative mx-auto max-w-7xl px-6 py-32 md:px-10">
+      <section id="problem" className="relative mx-auto max-w-7xl px-4 py-16 md:px-10 md:py-32">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-20"
+          className="text-center mb-12 md:mb-20"
         >
-          <h2 className="text-5xl md:text-6xl font-black mb-6" style={{ color: "#FFFFFF" }}>
+          <h2 className="text-fluid-h1 font-black mb-6" style={{ color: "#FFFFFF" }}>
             Does This Hit Close?
           </h2>
-          <p className="text-xl max-w-2xl mx-auto" style={{ color: "#B3B3B3" }}>
+          <p className="text-fluid-p max-w-2xl mx-auto" style={{ color: "#B3B3B3" }}>
             You built a world-class career. But somewhere along the way, your dream became someone else&apos;s asset.
           </p>
         </motion.div>
@@ -461,7 +609,7 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1, duration: 0.6 }}
-              className="group relative rounded-xl p-8 transition-all duration-300"
+              className="group relative rounded-xl p-5 md:p-8 transition-all duration-300"
               style={{ backgroundColor: "rgba(10, 10, 10, 0.6)", border: "1px solid rgba(212, 175, 55, 0.2)" }}
             >
               <div className="relative z-10">
@@ -479,31 +627,31 @@ export default function Home() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.6, duration: 0.8 }}
-          className="mt-20 rounded-3xl p-12 text-center backdrop-blur-md"
+          className="mt-12 md:mt-20 rounded-3xl p-8 md:p-12 text-center backdrop-blur-md"
           style={{ backgroundColor: "rgba(10, 10, 10, 0.7)", border: "1px solid rgba(212, 175, 55, 0.3)", boxShadow: "0 20px 60px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.05)" }}
         >
-          <h3 className="text-3xl md:text-4xl font-bold mb-4" style={{ color: "#FFFFFF" }}>
+          <h3 className="text-fluid-h2 font-bold mb-4" style={{ color: "#FFFFFF" }}>
             The Hard Truth
           </h3>
-          <p className="text-xl max-w-2xl mx-auto" style={{ color: "#B3B3B3" }}>
+          <p className="text-fluid-p max-w-2xl mx-auto" style={{ color: "#B3B3B3" }}>
             Your expertise isn&apos;t your asset — <span style={{ color: "#F5D76E", fontWeight: "bold" }}>the company&apos;s payroll is.</span> You stop working, you stop earning. That&apos;s not wealth. That&apos;s a beautiful cage.
           </p>
         </motion.div>
       </section>
 
       {/* INTERACTIVE COMPARISON - BEFORE vs AFTER */}
-      <section id="transformation" className="relative mx-auto max-w-6xl px-6 py-32 md:px-10">
+      <section id="transformation" className="relative mx-auto max-w-6xl px-4 py-16 md:px-10 md:py-32">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          className="text-center mb-8 md:mb-16"
         >
-          <h2 className="text-5xl md:text-6xl font-black mb-4" style={{ color: "#FFFFFF" }}>
+          <h2 className="text-fluid-h1 font-black mb-4" style={{ color: "#FFFFFF" }}>
             Your Transformation Awaits
           </h2>
-          <p className="text-xl" style={{ color: "#B3B3B3" }}>
+          <p className="text-fluid-p" style={{ color: "#B3B3B3" }}>
             Drag the slider. See the shift. This is your future.
           </p>
         </motion.div>
@@ -516,10 +664,10 @@ export default function Home() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.4, duration: 0.8 }}
-          className="rounded-2xl p-12"
+          className="rounded-2xl p-6 md:p-12"
           style={{ backgroundColor: "rgba(17, 17, 17, 0.7)", border: "1px solid #D4AF37" }}
         >
-          <h3 className="text-3xl font-bold mb-8 text-center" style={{ color: "#FFFFFF" }}>
+          <h3 className="text-fluid-h2 font-bold mb-8 text-center" style={{ color: "#FFFFFF" }}>
             Your Path to Freedom
           </h3>
           <div className="grid md:grid-cols-4 gap-6">
@@ -542,14 +690,14 @@ export default function Home() {
       </section>
 
       {/* PROOF / RESULTS SECTION */}
-      <section id="proof" className="relative mx-auto max-w-7xl px-6 py-32 md:px-10">
+      <section id="proof" className="relative mx-auto max-w-7xl px-4 py-16 md:px-10 md:py-32">
         {/* Impact stats */}
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20"
+          className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-8 mb-12 md:mb-20"
         >
           {successStats.map((stat, idx) => (
             <motion.div
@@ -558,18 +706,18 @@ export default function Home() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ delay: idx * 0.2, duration: 0.6 }}
-              className="rounded-2xl p-12 text-center backdrop-blur-sm"
+              className="rounded-2xl p-6 md:p-12 text-center backdrop-blur-sm"
               style={{ backgroundColor: "rgba(10, 10, 10, 0.7)", border: "1px solid rgba(212, 175, 55, 0.3)", boxShadow: "0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.04)" }}
             >
               <motion.div
-                className="text-5xl md:text-6xl font-black mb-4"
+                className="text-fluid-h2 font-black mb-4"
                 style={{ backgroundImage: "linear-gradient(135deg, #D4AF37, #F5D76E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", color: "transparent" }}
                 whileInView={{ scale: [0.8, 1.1, 1] }}
                 transition={{ duration: 0.8 }}
               >
                 {stat.number}
               </motion.div>
-              <p className="text-xl" style={{ color: "#B3B3B3" }}>{stat.label}</p>
+              <p className="text-fluid-p md:mt-2" style={{ color: "#B3B3B3" }}>{stat.label}</p>
             </motion.div>
           ))}
         </motion.div>
@@ -580,12 +728,12 @@ export default function Home() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="mb-20"
+          className="mb-12 md:mb-20"
         >
-          <h2 className="text-4xl md:text-5xl font-black mb-12 text-center" style={{ color: "#FFFFFF" }}>
+          <h2 className="text-fluid-h1 font-black mb-6 md:mb-12 text-center" style={{ color: "#FFFFFF" }}>
             Real Transformations
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-8">
             {testimonials2.map((t, idx) => (
               <motion.div
                 key={idx}
@@ -593,7 +741,7 @@ export default function Home() {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: idx * 0.15, duration: 0.6 }}
-                className="relative rounded-xl p-8 transition-all duration-300 backdrop-blur-sm"
+                className="relative rounded-xl p-5 md:p-8 transition-all duration-300 backdrop-blur-sm"
                 style={{ backgroundColor: "rgba(10, 10, 10, 0.6)", border: "1px solid rgba(212, 175, 55, 0.2)" }}
               >
                 <div className="flex gap-4 mb-4">
@@ -601,7 +749,7 @@ export default function Home() {
                     <span key={i} style={{ color: "#F5D76E" }}>★</span>
                   ))}
                 </div>
-                <p className="text-lg mb-6 italic" style={{ color: "#FFFFFF" }}>&quot;{t.quote}&quot;</p>
+                <p className="text-fluid-p mb-6 italic" style={{ color: "#FFFFFF" }}>&quot;{t.quote}&quot;</p>
                 <div>
                   <p className="font-bold" style={{ color: "#F5D76E" }}>{t.author}</p>
                   <p className="text-sm" style={{ color: "#B3B3B3" }}>{t.role}</p>
@@ -613,13 +761,13 @@ export default function Home() {
       </section>
 
       {/* MENTOR SECTION */}
-      <section className="relative mx-auto max-w-7xl px-6 py-32 md:px-10">
+      <section className="relative mx-auto max-w-7xl px-4 py-16 md:px-10 md:py-32">
         <motion.div
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="grid gap-12 md:grid-cols-2"
+          className="grid gap-8 md:gap-12 md:grid-cols-2"
         >
           {/* Mentor info */}
           <div className="flex flex-col justify-center">
@@ -630,33 +778,33 @@ export default function Home() {
               transition={{ delay: 0.2, duration: 0.6 }}
             >
               <p className="font-bold mb-2" style={{ color: "#F5D76E" }}>YOUR GUIDE</p>
-              <h2 className="text-5xl md:text-6xl font-black mb-4" style={{ color: "#FFFFFF" }}>
+              <h2 className="text-fluid-h1 font-black mb-4" style={{ color: "#FFFFFF" }}>
                 Meet Shobhit Singhal
               </h2>
-              <p className="text-xl mb-8" style={{ color: "#B3B3B3" }}>
+              <p className="text-fluid-p mb-6 md:mb-8" style={{ color: "#B3B3B3" }}>
                 TEDx Speaker • 2x TEDx Organizer • Consulting Mentor
               </p>
-              <p className="text-lg mb-8 leading-relaxed" style={{ color: "#B3B3B3" }}>
+              <p className="text-fluid-p mb-6 md:mb-8 leading-relaxed" style={{ color: "#B3B3B3" }}>
                 With 7+ years in corporate and 10+ years of mentoring, Shobhit has helped 100+ professionals build ₹1 Crore+ in consulting income. He&apos;s lived this transformation — and now shows you the exact system.
               </p>
 
               <div className="grid grid-cols-3 gap-4">
-                <div className="rounded-lg p-6 text-center" style={{ backgroundColor: "rgba(17, 17, 17, 0.8)", border: "1px solid #D4AF37" }}>
+                <div className="rounded-lg p-3 md:p-6 text-center" style={{ backgroundColor: "rgba(17, 17, 17, 0.8)", border: "1px solid #D4AF37" }}>
                   <p className="text-3xl font-bold" style={{ color: "#F5D76E" }}>7+</p>
                   <p className="text-xs uppercase mt-2" style={{ color: "#6B7280" }}>Corporate Years</p>
                 </div>
-                <div className="rounded-lg p-6 text-center" style={{ backgroundColor: "rgba(17, 17, 17, 0.8)", border: "1px solid #D4AF37" }}>
+                <div className="rounded-lg p-3 md:p-6 text-center" style={{ backgroundColor: "rgba(17, 17, 17, 0.8)", border: "1px solid #D4AF37" }}>
                   <p className="text-3xl font-bold" style={{ color: "#F5D76E" }}>100+</p>
                   <p className="text-xs uppercase mt-2" style={{ color: "#6B7280" }}>Mentored</p>
                 </div>
-                <div className="rounded-lg p-6 text-center" style={{ backgroundColor: "rgba(17, 17, 17, 0.8)", border: "1px solid #D4AF37" }}>
+                <div className="rounded-lg p-3 md:p-6 text-center" style={{ backgroundColor: "rgba(17, 17, 17, 0.8)", border: "1px solid #D4AF37" }}>
                   <p className="text-3xl font-bold" style={{ color: "#F5D76E" }}>3</p>
                   <p className="text-xs uppercase mt-2" style={{ color: "#6B7280" }}>Programs</p>
                 </div>
               </div>
 
               {/* Authority / Proof Images */}
-              <div className="grid grid-cols-2 gap-4 mt-8">
+              <div className="grid grid-cols-2 gap-3 md:gap-4 mt-6 md:mt-8">
                 <div className="rounded-[14px] p-2 bg-[#0A0A0A] border border-[#1A1A1A] shadow-sm">
                   <div className="relative h-28 md:h-36 w-full rounded-[10px] overflow-hidden grayscale-[15%]">
                     <Image src="/recognition.png" alt="Recognition" fill className="object-cover scale-[1.6] translate-y-[35px]" sizes="(max-width: 768px) 50vw, 30vw" />
@@ -681,7 +829,7 @@ export default function Home() {
             transition={{ delay: 0.3, duration: 0.8 }}
             className="relative"
           >
-            <div className="relative rounded-[16px] overflow-hidden h-[450px] md:h-full min-h-[450px]" style={{ border: "1px solid #D4AF37", boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }}>
+            <div className="relative rounded-[16px] overflow-hidden h-[350px] md:h-full min-h-[350px] md:min-h-[450px]" style={{ border: "1px solid #D4AF37", boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }}>
               <Image
                 src="/mentor.png"
                 alt="Shobhit Singhal"
@@ -696,13 +844,13 @@ export default function Home() {
       </section>
 
       {/* CTA SECTION - FINAL PUSH */}
-      <section id="cta" className="relative mx-auto max-w-5xl px-6 py-40 md:px-10">
+      <section id="cta" className="relative mx-auto max-w-5xl px-4 py-16 md:px-10 md:py-40">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="rounded-3xl p-16 text-center relative overflow-hidden backdrop-blur-md"
+          className="rounded-3xl p-8 md:p-16 text-center relative overflow-hidden backdrop-blur-md"
           style={{ backgroundColor: "rgba(10, 10, 10, 0.9)", border: "1px solid rgba(212, 175, 55, 0.3)", boxShadow: "0 25px 50px rgba(212, 175, 55, 0.15), 0 25px 80px rgba(0, 0, 0, 0.4)" }}
         >
           {/* Background glow effect */}
@@ -710,10 +858,10 @@ export default function Home() {
           <div className="absolute -bottom-40 -left-40 w-80 h-80 rounded-full blur-3xl" style={{ backgroundColor: "rgba(245, 215, 110, 0.1)" }}></div>
 
           <motion.div className="relative z-10">
-            <h2 className="text-5xl md:text-6xl font-black mb-6" style={{ color: "#FFFFFF" }}>
+            <h2 className="text-fluid-h1 font-black mb-6" style={{ color: "#FFFFFF" }}>
               Ready to Reclaim Your Freedom?
             </h2>
-            <p className="text-xl mb-12 max-w-2xl mx-auto" style={{ color: "#B3B3B3" }}>
+            <p className="text-fluid-p mb-8 md:mb-12 max-w-2xl mx-auto" style={{ color: "#B3B3B3" }}>
               The Corporate Freedom Series starts <span style={{ color: "#F5D76E", fontWeight: "bold" }}>10 April, 8:00 PM</span>.
               21 days of live guidance. Proven system. Real results.
             </p>
@@ -732,7 +880,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-12 px-6" style={{ backgroundColor: "rgba(0, 0, 0, 0.95)", borderColor: "rgba(212, 175, 55, 0.2)" }}>
+      <footer className="border-t py-8 md:py-12 px-4 md:px-6" style={{ backgroundColor: "rgba(0, 0, 0, 0.95)", borderColor: "rgba(212, 175, 55, 0.2)" }}>
         <div className="max-w-7xl mx-auto text-center text-sm" style={{ color: "#B3B3B3" }}>
           <p>© 2026 Corporate Freedom Series • Built for Transformation</p>
         </div>
