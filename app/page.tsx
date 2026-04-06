@@ -266,7 +266,7 @@ function ComparisonSlider() {
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent z-0 pointer-events-none" />
 
         <div className="absolute inset-0 flex flex-col items-start justify-end md:justify-center p-[16px] md:p-[32px] md:pl-16 z-10 w-full md:w-[45%]">
-          <div className="w-full max-w-[380px] bg-black/20 backdrop-blur-md p-4 md:p-6 rounded-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
+          <div className="w-full max-w-[380px] bg-black/40 backdrop-blur-md p-4 md:p-6 rounded-2xl border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.3)]">
             <h3 className="text-fluid-h2 font-bold tracking-tight mb-3 md:mb-6 text-white" style={{ textShadow: '0 2px 8px rgba(0,0,0,0.5)' }}>
               TRAPPED
             </h3>
@@ -314,7 +314,7 @@ function ComparisonSlider() {
         <div className="absolute inset-0 bg-gradient-to-l from-black/60 via-black/25 to-transparent z-0 pointer-events-none" />
 
         <div className="absolute inset-0 flex flex-col items-end justify-end md:justify-center p-[16px] md:p-[32px] md:pr-16 z-10 w-full pointer-events-none">
-          <div className="w-full max-w-[380px] bg-black/20 backdrop-blur-md p-4 md:p-6 rounded-2xl border border-[#D4AF37]/20 shadow-[0_8px_32px_rgba(212,175,55,0.1)]">
+          <div className="w-full max-w-[380px] bg-black/40 backdrop-blur-md p-4 md:p-6 rounded-2xl border border-[#D4AF37]/20 shadow-[0_8px_32px_rgba(212,175,55,0.1)]">
             <h3 className="text-fluid-h2 font-bold tracking-tight mb-3 md:mb-6" style={{ color: "#D4AF37", textShadow: "0 0 20px rgba(212, 175, 55, 0.5), 0 2px 8px rgba(0,0,0,0.5)" }}>
               FREE
             </h3>
@@ -527,7 +527,7 @@ export default function Home() {
           {/* Main headline with word-by-word reveal */}
           <motion.div className="mb-6 md:mb-10">
             <AnimatedTextReveal
-              text="From Corporate Burnout To Your Own ₹1 Crore Consulting Business"
+              text="From Corporate Burnout To Your Own ₹1+ Crore Consulting Business"
               className="text-fluid-h1 font-black leading-tight text-white"
             />
           </motion.div>
@@ -664,7 +664,7 @@ export default function Home() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.4, duration: 0.8 }}
-          className="rounded-2xl p-6 md:p-12"
+          className="mt-16 rounded-2xl p-6 md:p-12"
           style={{ backgroundColor: "rgba(17, 17, 17, 0.7)", border: "1px solid #D4AF37" }}
         >
           <h3 className="text-fluid-h2 font-bold mb-8 text-center" style={{ color: "#FFFFFF" }}>
@@ -805,13 +805,13 @@ export default function Home() {
 
               {/* Authority / Proof Images */}
               <div className="grid grid-cols-2 gap-3 md:gap-4 mt-6 md:mt-8">
-                <div className="rounded-[14px] p-2 bg-[#0A0A0A] border border-[#1A1A1A] shadow-sm">
+                <div className="rounded-[14px] p-2 bg-[#0A0A0A] border border-[#1A1A1A] shadow-sm transform scale-[1.15]">
                   <div className="relative h-28 md:h-36 w-full rounded-[10px] overflow-hidden grayscale-[15%]">
                     <Image src="/recognition.png" alt="Recognition" fill className="object-cover scale-[1.6] translate-y-[35px]" sizes="(max-width: 768px) 50vw, 30vw" />
                   </div>
                   <p className="text-center text-xs mt-3 mb-1 text-[#B3B3B3] uppercase tracking-wider font-semibold">Recognition</p>
                 </div>
-                <div className="rounded-[14px] p-2 bg-[#0A0A0A] border border-[#1A1A1A] shadow-sm">
+                <div className="rounded-[14px] p-2 bg-[#0A0A0A] border border-[#1A1A1A] shadow-sm transform scale-[1.15]">
                   <div className="relative h-28 md:h-36 w-full rounded-[10px] overflow-hidden grayscale-[15%]">
                     <Image src="/industryrecognition.png" alt="Industry presence" fill className="object-cover scale-[1.15] translate-y-[20px]" sizes="(max-width: 768px) 50vw, 30vw" />
                   </div>
@@ -829,7 +829,7 @@ export default function Home() {
             transition={{ delay: 0.3, duration: 0.8 }}
             className="relative"
           >
-            <div className="relative rounded-[16px] overflow-hidden h-[350px] md:h-full min-h-[350px] md:min-h-[450px]" style={{ border: "1px solid #D4AF37", boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }}>
+            <div className="relative rounded-[16px] overflow-hidden h-[350px] md:h-full min-h-[350px] md:min-h-[450px] transform scale-[0.85] origin-center" style={{ border: "1px solid #D4AF37", boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }}>
               <Image
                 src="/mentor.png"
                 alt="Shobhit Singhal"
