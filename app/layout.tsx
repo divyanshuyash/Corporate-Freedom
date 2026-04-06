@@ -19,7 +19,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "series.transformershub.in",
+  title: "Corporate Freedom Series",
   description: "Corporate Freedom Series – 21 Day Live Program by Shobhit Singhal",
 };
 

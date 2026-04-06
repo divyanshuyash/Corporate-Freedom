@@ -782,7 +782,7 @@ export default function Home() {
                 Meet Shobhit Singhal
               </h2>
               <p className="text-fluid-p mb-6 md:mb-8" style={{ color: "#B3B3B3" }}>
-                TEDx Speaker • 2x TEDx Organizer • Consulting Mentor
+                2x TED Circle Leader • Consulting Mentor
               </p>
               <p className="text-fluid-p mb-6 md:mb-8 leading-relaxed" style={{ color: "#B3B3B3" }}>
                 With 7+ years in corporate and 10+ years of mentoring, Shobhit has helped 100+ professionals build ₹1 Crore+ in consulting income. He&apos;s lived this transformation — and now shows you the exact system.
