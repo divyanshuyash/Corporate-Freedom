@@ -197,7 +197,7 @@ function CountdownTimer() {
           </div>
         ))}
       </div>
-      <p className="text-center text-sm mt-6" style={{ color: "#B3B3B3" }}>10 April, 8:00 PM IST</p>
+      <p className="text-center text-lg md:text-xl font-bold mt-6 tracking-wide" style={{ color: "#E5E5E5" }}>10 April, 8:00 PM IST</p>
     </motion.div>
   );
 }
@@ -767,79 +767,132 @@ export default function Home() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ duration: 0.8 }}
-          className="grid gap-8 md:gap-12 md:grid-cols-2"
+          className="grid gap-8 md:gap-10 lg:grid-cols-2 items-center"
         >
-          {/* Mentor info */}
-          <div className="flex flex-col justify-center">
+          {/* Mentor info - Premium Dark Card (Left Column) */}
+          <div 
+            className="flex flex-col justify-center rounded-[32px] p-8 md:p-10 lg:p-12 h-full relative overflow-hidden backdrop-blur-md"
+            style={{ backgroundColor: "rgba(10, 10, 10, 0.6)", border: "1px solid rgba(212, 175, 55, 0.2)", boxShadow: "0 20px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)" }}
+          >
+            {/* Subtle glow effect inside card */}
+            <div className="absolute -top-40 -left-40 w-80 h-80 rounded-full blur-[100px] pointer-events-none" style={{ backgroundColor: "rgba(212, 175, 55, 0.08)" }}></div>
+            
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.2, duration: 0.6 }}
+              className="relative z-10"
             >
-              <p className="font-bold mb-2" style={{ color: "#F5D76E" }}>YOUR GUIDE</p>
-              <h2 className="text-fluid-h1 font-black mb-4" style={{ color: "#FFFFFF" }}>
-                Meet Shobhit Singhal
-              </h2>
-              <p className="text-fluid-p mb-6 md:mb-8" style={{ color: "#B3B3B3" }}>
-                2x TED Circle Leader • Consulting Mentor
-              </p>
-              <p className="text-fluid-p mb-6 md:mb-8 leading-relaxed" style={{ color: "#B3B3B3" }}>
-                With 7+ years in corporate and 10+ years of mentoring, Shobhit has helped 100+ professionals build ₹1 Crore+ in consulting income. He&apos;s lived this transformation — and now shows you the exact system.
-              </p>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div className="rounded-lg p-3 md:p-6 text-center" style={{ backgroundColor: "rgba(17, 17, 17, 0.8)", border: "1px solid #D4AF37" }}>
-                  <p className="text-3xl font-bold" style={{ color: "#F5D76E" }}>7+</p>
-                  <p className="text-xs uppercase mt-2" style={{ color: "#6B7280" }}>Corporate Years</p>
-                </div>
-                <div className="rounded-lg p-3 md:p-6 text-center" style={{ backgroundColor: "rgba(17, 17, 17, 0.8)", border: "1px solid #D4AF37" }}>
-                  <p className="text-3xl font-bold" style={{ color: "#F5D76E" }}>100+</p>
-                  <p className="text-xs uppercase mt-2" style={{ color: "#6B7280" }}>Mentored</p>
-                </div>
-                <div className="rounded-lg p-3 md:p-6 text-center" style={{ backgroundColor: "rgba(17, 17, 17, 0.8)", border: "1px solid #D4AF37" }}>
-                  <p className="text-3xl font-bold" style={{ color: "#F5D76E" }}>3</p>
-                  <p className="text-xs uppercase mt-2" style={{ color: "#6B7280" }}>Programs</p>
-                </div>
+              <div 
+                className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6"
+                style={{ backgroundColor: "rgba(212, 175, 55, 0.08)", border: "1px solid rgba(212, 175, 55, 0.3)" }}
+              >
+                <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#F5D76E", boxShadow: "0 0 10px #F5D76E" }}></div>
+                <p className="font-bold text-xs tracking-[0.15em] uppercase" style={{ color: "#F5D76E" }}>Your Guide</p>
               </div>
+              
+              <h2 className="text-fluid-h1 font-black mb-4 leading-[1.1]" style={{ color: "#FFFFFF", textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}>
+                Meet Shobhit<br />Singhal
+              </h2>
+              
+              <p className="text-lg md:text-xl font-medium mb-6 md:mb-8" style={{ color: "#D4AF37" }}>
+                2x TEDx Circle Leader • Consulting Mentor
+              </p>
+              
+              <p className="text-sm md:text-base mb-10 leading-relaxed max-w-[95%]" style={{ color: "#B3B3B3" }}>
+                With 7+ years in corporate and 10+ years of mentoring, Shobhit has helped 100+ professionals build consulting buisness worth ₹1 Crore+ . He&apos;s lived this transformation — and now shows you the exact system.
+              </p>
 
-              {/* Authority / Proof Images */}
-              <div className="grid grid-cols-2 gap-3 md:gap-4 mt-6 md:mt-8">
-                <div className="rounded-[14px] p-2 bg-[#0A0A0A] border border-[#1A1A1A] shadow-sm transform scale-[1.15]">
-                  <div className="relative h-28 md:h-36 w-full rounded-[10px] overflow-hidden grayscale-[15%]">
-                    <Image src="/recognition.png" alt="Recognition" fill className="object-cover scale-[1.6] translate-y-[35px]" sizes="(max-width: 768px) 50vw, 30vw" />
-                  </div>
-                  <p className="text-center text-xs mt-3 mb-1 text-[#B3B3B3] uppercase tracking-wider font-semibold">Recognition</p>
+              <div className="grid grid-cols-3 gap-3 md:gap-5 mt-auto">
+                <div className="rounded-2xl p-4 md:p-6 text-center backdrop-blur-sm transition-transform duration-300 hover:-translate-y-1" style={{ backgroundColor: "rgba(212, 175, 55, 0.03)", border: "1px solid rgba(212, 175, 55, 0.15)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)" }}>
+                  <motion.div 
+                    className="text-3xl md:text-4xl font-black mb-1" 
+                    style={{ backgroundImage: "linear-gradient(135deg, #D4AF37, #F5D76E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", color: "transparent" }}
+                  >
+                    7+
+                  </motion.div>
+                  <p className="text-[10px] md:text-[11px] uppercase mt-2 tracking-widest font-semibold" style={{ color: "#808080" }}>Corporate Years</p>
                 </div>
-                <div className="rounded-[14px] p-2 bg-[#0A0A0A] border border-[#1A1A1A] shadow-sm transform scale-[1.15]">
-                  <div className="relative h-28 md:h-36 w-full rounded-[10px] overflow-hidden grayscale-[15%]">
-                    <Image src="/industryrecognition.png" alt="Industry presence" fill className="object-cover scale-[1.15] translate-y-[20px]" sizes="(max-width: 768px) 50vw, 30vw" />
-                  </div>
-                  <p className="text-center text-xs mt-3 mb-1 text-[#B3B3B3] uppercase tracking-wider font-semibold">Industry presence</p>
+                
+                <div className="rounded-2xl p-4 md:p-6 text-center backdrop-blur-sm transition-transform duration-300 hover:-translate-y-1" style={{ backgroundColor: "rgba(212, 175, 55, 0.03)", border: "1px solid rgba(212, 175, 55, 0.15)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)" }}>
+                  <motion.div 
+                    className="text-3xl md:text-4xl font-black mb-1" 
+                    style={{ backgroundImage: "linear-gradient(135deg, #D4AF37, #F5D76E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", color: "transparent" }}
+                  >
+                    100+
+                  </motion.div>
+                  <p className="text-[10px] md:text-[11px] uppercase mt-2 tracking-widest font-semibold" style={{ color: "#808080" }}>Mentored</p>
+                </div>
+                
+                <div className="rounded-2xl p-4 md:p-6 text-center backdrop-blur-sm transition-transform duration-300 hover:-translate-y-1 flex flex-col justify-center" style={{ backgroundColor: "rgba(212, 175, 55, 0.03)", border: "1px solid rgba(212, 175, 55, 0.15)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)" }}>
+                  <motion.div 
+                    className="text-3xl md:text-4xl font-black mb-1" 
+                    style={{ backgroundImage: "linear-gradient(135deg, #D4AF37, #F5D76E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", color: "transparent" }}
+                  >
+                    3
+                  </motion.div>
+                  <p className="text-[10px] md:text-[11px] uppercase mt-2 tracking-widest font-semibold leading-tight mx-auto max-w-[80px]" style={{ color: "#808080" }}>Consulting Programs</p>
                 </div>
               </div>
             </motion.div>
           </div>
 
-          {/* Mentor image */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3, duration: 0.8 }}
-            className="relative"
-          >
-            <div className="relative rounded-[16px] overflow-hidden h-[350px] md:h-full min-h-[350px] md:min-h-[450px] transform scale-[0.85] origin-center" style={{ border: "1px solid #D4AF37", boxShadow: "0 10px 40px rgba(0,0,0,0.5)" }}>
-              <Image
-                src="/mentor.png"
-                alt="Shobhit Singhal"
-                fill
-                className="object-cover object-[70%_top]"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" style={{ backgroundImage: "linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 25%, transparent 100%)", pointerEvents: "none" }}></div>
-            </div>
-          </motion.div>
+          {/* Mentor Images - Symmetrical Stack (Right Column) */}
+          <div className="flex flex-col items-center justify-center w-full mt-4 md:mt-0 lg:px-6">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="flex flex-col w-full max-w-[480px] gap-6"
+            >
+              
+              {/* Main Mentor Image (Top) */}
+              <div className="relative w-full rounded-[24px] overflow-hidden aspect-[4/3] backdrop-blur-sm group" style={{ backgroundColor: "rgba(10, 10, 10, 0.5)", border: "1px solid rgba(212, 175, 55, 0.4)", boxShadow: "0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)" }}>
+                <Image
+                  src="/mentor.png"
+                  alt="Shobhit Singhal"
+                  fill
+                  className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                  sizes="(max-width: 768px) 100vw, 480px"
+                />
+              </div>
+
+              {/* Bottom Authority Images - Symmetrical Squares */}
+              <div className="grid grid-cols-2 gap-6 w-full">
+                
+                {/* Recognition */}
+                <div className="group flex flex-col w-full">
+                  <div className="relative w-full rounded-[24px] overflow-hidden aspect-square backdrop-blur-sm" style={{ backgroundColor: "rgba(10, 10, 10, 0.4)", border: "1px solid rgba(212, 175, 55, 0.15)", boxShadow: "0 10px 30px rgba(0,0,0,0.3)" }}>
+                    <Image 
+                      src="/recognition.png" 
+                      alt="Recognition" 
+                      fill 
+                      className="object-cover transition-transform duration-700 group-hover:scale-105 grayscale-[15%]" 
+                      sizes="(max-width: 768px) 50vw, 220px" 
+                    />
+                  </div>
+                  <p className="text-center text-[10px] md:text-xs mt-4 text-[#B3B3B3] uppercase tracking-[0.15em] font-bold transition-colors duration-300 group-hover:text-[#F5D76E]">Recognition</p>
+                </div>
+
+                {/* Industry Presence */}
+                <div className="group flex flex-col w-full">
+                  <div className="relative w-full rounded-[24px] overflow-hidden aspect-square backdrop-blur-sm" style={{ backgroundColor: "rgba(10, 10, 10, 0.4)", border: "1px solid rgba(212, 175, 55, 0.15)", boxShadow: "0 10px 30px rgba(0,0,0,0.3)" }}>
+                    <Image 
+                      src="/industryrecognition.png" 
+                      alt="Industry presence" 
+                      fill 
+                      className="object-cover transition-transform duration-700 group-hover:scale-105 grayscale-[15%]" 
+                      sizes="(max-width: 768px) 50vw, 220px" 
+                    />
+                  </div>
+                  <p className="text-center text-[10px] md:text-xs mt-4 text-[#B3B3B3] uppercase tracking-[0.15em] font-bold transition-colors duration-300 group-hover:text-[#F5D76E]">Industry presence</p>
+                </div>
+                
+              </div>
+            </motion.div>
+          </div>
         </motion.div>
       </section>
 
