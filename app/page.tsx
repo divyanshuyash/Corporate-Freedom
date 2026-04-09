@@ -413,7 +413,7 @@ const painPoints = [
 
 const successStats = [
   { number: "1,247+", label: "Professionals Transformed" },
-  { number: "₹1Cr+", label: "Combined Income Generated" },
+  { number: "₹1Cr+", label: "Worth Businesses Created" },
   { number: "47%", label: "Left Corporate Within 6 Months" },
 ];
 
@@ -770,13 +770,13 @@ export default function Home() {
           className="grid gap-8 md:gap-10 lg:grid-cols-2 items-center"
         >
           {/* Mentor info - Premium Dark Card (Left Column) */}
-          <div 
+          <div
             className="flex flex-col justify-center rounded-[32px] p-8 md:p-10 lg:p-12 h-full relative overflow-hidden backdrop-blur-md"
             style={{ backgroundColor: "rgba(10, 10, 10, 0.6)", border: "1px solid rgba(212, 175, 55, 0.2)", boxShadow: "0 20px 60px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05)" }}
           >
             {/* Subtle glow effect inside card */}
             <div className="absolute -top-40 -left-40 w-80 h-80 rounded-full blur-[100px] pointer-events-none" style={{ backgroundColor: "rgba(212, 175, 55, 0.08)" }}></div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -784,50 +784,50 @@ export default function Home() {
               transition={{ delay: 0.2, duration: 0.6 }}
               className="relative z-10"
             >
-              <div 
+              <div
                 className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full mb-6"
                 style={{ backgroundColor: "rgba(212, 175, 55, 0.08)", border: "1px solid rgba(212, 175, 55, 0.3)" }}
               >
                 <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: "#F5D76E", boxShadow: "0 0 10px #F5D76E" }}></div>
                 <p className="font-bold text-xs tracking-[0.15em] uppercase" style={{ color: "#F5D76E" }}>Your Guide</p>
               </div>
-              
+
               <h2 className="text-fluid-h1 font-black mb-4 leading-[1.1]" style={{ color: "#FFFFFF", textShadow: "0 4px 20px rgba(0,0,0,0.5)" }}>
                 Meet Shobhit<br />Singhal
               </h2>
-              
+
               <p className="text-lg md:text-xl font-medium mb-6 md:mb-8" style={{ color: "#D4AF37" }}>
-                2x TEDx Circle Leader • Consulting Mentor
+                2x TED Circle Leader • Consulting Mentor
               </p>
-              
+
               <p className="text-sm md:text-base mb-10 leading-relaxed max-w-[95%]" style={{ color: "#B3B3B3" }}>
-                With 7+ years in corporate and 10+ years of mentoring, Shobhit has helped 100+ professionals build consulting buisness worth ₹1 Crore+ . He&apos;s lived this transformation — and now shows you the exact system.
+                With 7+ years in corporate and 10+ years of mentoring, Shobhit has helped 100+ professionals build consulting businesses worth ₹1 Crore+ . He&apos;s lived this transformation — and now shows you the exact system.
               </p>
 
               <div className="grid grid-cols-3 gap-3 md:gap-5 mt-auto">
                 <div className="rounded-2xl p-4 md:p-6 text-center backdrop-blur-sm transition-transform duration-300 hover:-translate-y-1" style={{ backgroundColor: "rgba(212, 175, 55, 0.03)", border: "1px solid rgba(212, 175, 55, 0.15)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)" }}>
-                  <motion.div 
-                    className="text-3xl md:text-4xl font-black mb-1" 
+                  <motion.div
+                    className="text-3xl md:text-4xl font-black mb-1"
                     style={{ backgroundImage: "linear-gradient(135deg, #D4AF37, #F5D76E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", color: "transparent" }}
                   >
                     7+
                   </motion.div>
                   <p className="text-[10px] md:text-[11px] uppercase mt-2 tracking-widest font-semibold" style={{ color: "#808080" }}>Corporate Years</p>
                 </div>
-                
+
                 <div className="rounded-2xl p-4 md:p-6 text-center backdrop-blur-sm transition-transform duration-300 hover:-translate-y-1" style={{ backgroundColor: "rgba(212, 175, 55, 0.03)", border: "1px solid rgba(212, 175, 55, 0.15)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)" }}>
-                  <motion.div 
-                    className="text-3xl md:text-4xl font-black mb-1" 
+                  <motion.div
+                    className="text-3xl md:text-4xl font-black mb-1"
                     style={{ backgroundImage: "linear-gradient(135deg, #D4AF37, #F5D76E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", color: "transparent" }}
                   >
                     100+
                   </motion.div>
                   <p className="text-[10px] md:text-[11px] uppercase mt-2 tracking-widest font-semibold" style={{ color: "#808080" }}>Mentored</p>
                 </div>
-                
+
                 <div className="rounded-2xl p-4 md:p-6 text-center backdrop-blur-sm transition-transform duration-300 hover:-translate-y-1 flex flex-col justify-center" style={{ backgroundColor: "rgba(212, 175, 55, 0.03)", border: "1px solid rgba(212, 175, 55, 0.15)", boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)" }}>
-                  <motion.div 
-                    className="text-3xl md:text-4xl font-black mb-1" 
+                  <motion.div
+                    className="text-3xl md:text-4xl font-black mb-1"
                     style={{ backgroundImage: "linear-gradient(135deg, #D4AF37, #F5D76E)", backgroundClip: "text", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", color: "transparent" }}
                   >
                     3
@@ -847,7 +847,7 @@ export default function Home() {
               transition={{ delay: 0.3, duration: 0.8 }}
               className="flex flex-col w-full max-w-[480px] gap-6"
             >
-              
+
               {/* Main Mentor Image (Top) */}
               <div className="relative w-full rounded-[24px] overflow-hidden aspect-[4/3] backdrop-blur-sm group" style={{ backgroundColor: "rgba(10, 10, 10, 0.5)", border: "1px solid rgba(212, 175, 55, 0.4)", boxShadow: "0 20px 50px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)" }}>
                 <Image
@@ -861,16 +861,16 @@ export default function Home() {
 
               {/* Bottom Authority Images - Symmetrical Squares */}
               <div className="grid grid-cols-2 gap-6 w-full">
-                
+
                 {/* Recognition */}
                 <div className="group flex flex-col w-full">
                   <div className="relative w-full rounded-[24px] overflow-hidden aspect-square backdrop-blur-sm" style={{ backgroundColor: "rgba(10, 10, 10, 0.4)", border: "1px solid rgba(212, 175, 55, 0.15)", boxShadow: "0 10px 30px rgba(0,0,0,0.3)" }}>
-                    <Image 
-                      src="/recognition.png" 
-                      alt="Recognition" 
-                      fill 
-                      className="object-cover transition-transform duration-700 group-hover:scale-105 grayscale-[15%]" 
-                      sizes="(max-width: 768px) 50vw, 220px" 
+                    <Image
+                      src="/recognition.png"
+                      alt="Recognition"
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105 grayscale-[15%]"
+                      sizes="(max-width: 768px) 50vw, 220px"
                     />
                   </div>
                   <p className="text-center text-[10px] md:text-xs mt-4 text-[#B3B3B3] uppercase tracking-[0.15em] font-bold transition-colors duration-300 group-hover:text-[#F5D76E]">Recognition</p>
@@ -879,17 +879,17 @@ export default function Home() {
                 {/* Industry Presence */}
                 <div className="group flex flex-col w-full">
                   <div className="relative w-full rounded-[24px] overflow-hidden aspect-square backdrop-blur-sm" style={{ backgroundColor: "rgba(10, 10, 10, 0.4)", border: "1px solid rgba(212, 175, 55, 0.15)", boxShadow: "0 10px 30px rgba(0,0,0,0.3)" }}>
-                    <Image 
-                      src="/industryrecognition.png" 
-                      alt="Industry presence" 
-                      fill 
-                      className="object-cover transition-transform duration-700 group-hover:scale-105 grayscale-[15%]" 
-                      sizes="(max-width: 768px) 50vw, 220px" 
+                    <Image
+                      src="/industryrecognition.png"
+                      alt="Industry presence"
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105 grayscale-[15%]"
+                      sizes="(max-width: 768px) 50vw, 220px"
                     />
                   </div>
                   <p className="text-center text-[10px] md:text-xs mt-4 text-[#B3B3B3] uppercase tracking-[0.15em] font-bold transition-colors duration-300 group-hover:text-[#F5D76E]">Industry presence</p>
                 </div>
-                
+
               </div>
             </motion.div>
           </div>
